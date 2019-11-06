@@ -6,11 +6,13 @@
 - xml streaming (sax reader)
 - lazy document building (DOM)
 
-## How to use
+## How to use: Node
 
+Using the reader:
 ```js
+import * as xmlazy from 'xmlazy';
 
-const reader = new SaxStringReader('<hello>world!</hello>');
+const reader = new xmlazy.SaxStringReader('<hello>world!</hello>');
 
 let readerResult, lazyDomNode;
 while (!(readerResult = reader.next()).done){
@@ -25,6 +27,50 @@ while (!(readerResult = reader.next()).done){
 }
 ```
 
+Building a DOM document:
+
+```js
+import * as xmlazy from 'xmlazy';
+
+const reader = new xmlazy.SaxStringReader('<hello>world!</hello>');
+const domDocument = reader.buildDocument();
+```
+
+## How to use: Browser
+
+Using the reader:
+
+```
+<script type="module">
+  import * as xmlazy from '/dist/xmlazy.bundle.js';
+
+  const reader = new xmlazy.SaxStringReader('<hello>world!</hello>');
+
+  let readerResult, lazyDomNode;
+  while (!(readerResult = reader.next()).done){
+
+    lazyDomNode = readerResult.value;  
+    switch (lazyDomNode.nodeType) {
+    
+      // do something interesting 
+      
+    }
+    
+  }
+</script>
+```
+
+Building a DOM document:
+
+```
+<script type="module">
+  import * as xmlazy from '/dist/xmlazy.bundle.js';
+
+  const reader = new xmlazy.SaxStringReader('<hello>world!</hello>');
+  const domDocument = reader.buildDocument();
+
+</script>
+```
 
 ## Developer environment requirements
 
@@ -36,30 +82,16 @@ To run this project, you will need:
 ## Running tests
 
 ```sh
-yarn
-yarn test
-yarn test --watch
+npm run test
 ```
 
-## Dev mode
-
-When developing you can run:
-
-```
-yarn watch
-```
-
-This will regenerate the build files each time a source file is changed and serve on http://127.0.0.1:5000.
-
-### Previewing umd build in the browser
-
-If your package works in the browser, you can open `dev/index.html` to try it out.
-
-## Publishing
+## Running Samples
 
 ```sh
-npm publish
+npm run serve
 ```
+
+Then navigate to: [http://127.0.0.1:8080/samples/browser/index.html](http://127.0.0.1:8080/samples/browser/index.html)
 
 ## Acknowledgements
 
