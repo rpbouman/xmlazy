@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Lazyx Samples: 02. Parsing a File with FileReader</title>
+    <script type="text/javascript" src="../3rdparty/emoji-favicon-toolkit.min.js"></script>
+    <script type="text/javascript">
+      set_emoji_favicon(emoji="🦥", cacheWithServiceWorker = false);
+    </script>
+    <style type="text/css">
+    
+      #error {
+        color: red;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <h1>🦥 02. Parsing a File with FileReader</h1>
+    <a href="../index.html">Back</a>
+    <table>
+      <tr>
+        <th>XML file:</th
+        >
+        <td><input
+          type="file"
+          id="fileInput"
+          accept=".xml"
+        />
+        </td>
+      </tr>
+      <tr>
+        <th>Filesize</th><td id="fileSize"></td>
+      </tr>
+      <tr>
+        <th>Time</th><td id="time"></td>
+      </tr>
+      <tr>
+        <th>Sax Events:</th><td id="saxEvents"></td>
+      </tr>
+      <tr>
+        <th>Speed:</th><td id="speed"></td>
+      </tr>
+    </table>
+    <div id="error"></div>
+    <script type="module">
+      import * as xmlazy from '/dist/xmlazy.bundle.js';
+
+      let numSaxEvents;
+      const handleFile = (event) => {
+        document.getElementById("fileSize").innerText = "";
+        document.getElementById("time").innerText = "";
+        document.getElementById("saxEvents").innerText = "";
+        document.getElementById("speed").innerText = "";
+        document.getElementById("error").innerText = "";
+        
+        const fileInput = event.target;
+        const files = fileInput.files;
+        const file = files[0];
+        if (file === undefined) {
+          return;
+        }
+        fileInput.value = "";
+
+        document.getElementById("fileSize").innerText = file.size + " bytes ("  + Math.round(file.size/1024) +  " Kb)" ;
+        
+        const fileReader = new FileReader();        
+        fileReader.onload = function(event){
+          const xml = event.target.result;          
+          parseXml(xml);
+          const expired = Date.now() - start;
+          document.getElementById("time").innerText = expired;
+          document.getElementById("saxEvents").innerText = numSaxEvents;
+          document.getElementById("speed").innerText =  
+            Math.round(file.size / expired / 1024) + " Kb/ms; " + 
+            Math.round(numSaxEvents / expired ) + " SaxEvents/ms; "
+          ;
+        }
+        const start = Date.now();
+        fileReader.readAsText(file);
+      }
+                  
+      const parseXml = (xml) => { 
+        const saxOutput = document.getElementById("saxOutput");
+        const saxReader = new xmlazy.SaxStringReader(xml);
+        let saxReaderResult;
+        numSaxEvents = 0;
+        try {
+          while (!(saxReaderResult = saxReader.next()).done) {
+            numSaxEvents += 1;
+          }
+        }
+        catch (e) {
+          document.getElementById("error").innerText = e.message;
+        }
+      }
+
+      document.getElementById("fileInput").onchange = handleFile;
+      
+    </script>    
+  </body>
+</html>

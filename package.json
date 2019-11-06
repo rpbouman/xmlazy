@@ -1,0 +1,58 @@
+{
+  "name": "@rpbouman/xmlazy",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
+  "version": "1.0.2",
+  "main": "./dist/xmlazy.cjs.js",
+  "module": "./dist/xmlazy.esm.js",
+  "types": "./dist/lib/main.d.ts",
+  "browser": "./dist/xmlazy.umd.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rpbouman/xmlazy"
+  },
+  "devDependencies": {
+    "@ampproject/rollup-plugin-closure-compiler": "^0.12.1",
+    "@babel/core": "7.6.4",
+    "@babel/preset-env": "7.6.3",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "24.9.0",
+    "babel-polyfill": "^6.26.0",
+    "concurrently": "4.1.2",
+    "eslint": "^6.5.1",
+    "http-server": "^0.11.1",
+    "jest": "24.9.0",
+    "rollup": "1.25.0",
+    "rollup-plugin-babel": "4.3.3",
+    "rollup-plugin-commonjs": "10.1.0",
+    "rollup-plugin-node-resolve": "5.2.0",
+    "serve": "11.2.0",
+    "yauzl": "^2.10.0"
+  },
+  "scripts": {
+    "prepare": "yarn build",
+    "rollup": "rollup -c",
+    "build": "npm run lint && npm run rollup",
+    "build:watch": "rollup -c -w",
+    "lint": "eslint --ignore-path .gitignore ./src",
+    "serve": "http-server -o .",
+    "test": "jest --coverage --verbose --detectOpenHandles",
+    "watch": "concurrently 'yarn build:watch' 'yarn serve -l tcp://127.0.0.1'",
+    "webpack": "webpack"
+  },
+  "renovate": {
+    "extends": [
+      "config:js-lib"
+    ],
+    "automerge": true,
+    "major": {
+      "automerge": false
+    },
+    "automergeType": "branch"
+  },
+  "files": [
+    "dist"
+  ]
+}

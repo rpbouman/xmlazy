@@ -1,0 +1,1 @@
+https://github.com/eligrey/emoji-favicon-toolkit

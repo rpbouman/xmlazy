@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Lazyx Samples: 03. Building a document using Filereader</title>
+    <script type="text/javascript" src="../3rdparty/emoji-favicon-toolkit.min.js"></script>
+    <script type="text/javascript">
+      set_emoji_favicon(emoji="🦥", cacheWithServiceWorker = false);
+    </script>
+    <style type="text/css">
+      textarea {
+        width: 100%
+      }
+      
+      #tree {
+        border: solid;
+        border-width: 2px;
+        border-color: silver;
+        font-family: monospace;
+      }
+    
+      .node {
+      }
+
+      .node-switch {
+        cursor: pointer;
+      }
+      
+      .node[data-nodetype="9"] > .node-head > .node-label:before {
+        content: '📄';
+      }
+
+      .node[data-nodetype="7"] > .node-head > .node-label:before {
+        content: '\00003c?';
+      }
+      .node[data-nodetype="7"] > .node-head > .node-label:after {
+        content: '?\00003e';
+      }
+
+      .node[data-nodetype="4"] > .node-head > .node-label:before {
+        content: '\00003c[CDATA[ ';
+      }
+      .node[data-nodetype="4"] > .node-head > .node-label:after {
+        content: ' ]]\00003e';
+      }
+
+      .node[data-nodetype="10"] > .node-head > .node-label:before {
+        content: '\00003c!DOCTYPE ';
+      }
+      .node[data-nodetype="10"] > .node-head > .node-label:after {
+        content: '\00003e';
+      }
+
+      .node[data-nodetype="8"] > .node-head > .node-label:before {
+        content: '\00003c1-- ';
+      }
+      .node[data-nodetype="8"] > .node-head > .node-label:after {
+        content: ' --\00003e';
+      }
+      
+      .node[data-nodetype="1"] > .node-head > .node-label:before {
+        content: '\00003c';
+      }
+      .node[data-nodetype="1"] > .node-head > .node-label:after {
+        content: '\00003e';
+      }
+      
+      .node-body {
+        padding-left: 1em;
+      }
+      
+      .nodeType1 
+    </style>
+  </head>
+  <body>
+    <h1>🦥 03. Building a document with FileReader</h1>
+    <a href="../index.html">Back</a>
+    <input
+      type="file"
+      id="fileInput"
+      accept=".xml"
+    />
+    <button id="btnParse">Parse</button>
+    <textarea id="textarea" rows="10"></textarea>
+    <div>Document Tree view:</div>
+    <div id="tree">
+      
+    </div>
+    <script type="module">
+      import * as xmlazy from '/dist/xmlazy.bundle.js';
+
+      let doc;
+      let numSaxEvents;
+      const handleFile = (event) => {
+        const fileInput = event.target;
+        const files = fileInput.files;
+        const file = files[0];
+        if (file === undefined) {
+          return;
+        }
+        fileInput.value = '';
+
+        document.getElementById('textarea').value = '';
+        
+        const fileReader = new FileReader();        
+        fileReader.onload = function(event){
+          const xml = event.target.result;          
+          document.getElementById("textarea").value = xml;
+          parseXml();
+        }
+        fileReader.readAsText(file);
+      }
+                  
+      const parseXml = (xml) => { 
+        xml = xml || document.getElementById('textarea').value;
+        const saxOutput = document.getElementById("saxOutput");
+        const saxReader = new xmlazy.SaxStringReader(xml);
+        let saxReaderResult;
+        numSaxEvents = 0;
+        try {
+          doc = saxReader.buildDocument();
+        }
+        catch (e) {
+          document.getElementById('error').innerText = e.message;
+        }
+        document.getElementById('tree').innerHTML = ''
+        createTreeNode(document.getElementById('tree'), doc);
+      }
+
+      document.getElementById('fileInput').onchange = handleFile;
+      document.getElementById('btnParse').onclick = function(){
+        parseXml()
+      };
+      
+      function createTreeNode(parentTreeNodeBody, domNode) {
+        var htmlNode = document.createElement('DIV');
+        var hasChildNodes = domNode.hasChildNodes();
+        htmlNode.className = 'node';
+        htmlNode.setAttribute('data-nodeType', domNode.nodeType);
+        htmlNode.setAttribute('data-hasChildNodes', hasChildNodes);
+        parentTreeNodeBody.appendChild(htmlNode);
+
+        var htmlNodeHead = document.createElement('DIV');
+        htmlNodeHead.className = 'node-head';
+        htmlNode.appendChild(htmlNodeHead);
+
+        var htmlNodeSwitch = document.createElement("SPAN");
+        htmlNodeSwitch.className = 'node-switch';
+        htmlNodeSwitch.innerText = hasChildNodes ? '+' : String.fromCharCode(160);
+        htmlNodeHead.appendChild(htmlNodeSwitch);
+
+        var htmlNodeLabel = document.createElement("SPAN");
+        htmlNodeLabel.className = 'node-label';
+        htmlNodeLabel.innerText = domNode.nodeName;
+        htmlNodeHead.appendChild(htmlNodeLabel);
+
+        if (hasChildNodes) {
+          var htmlNodeBody = document.createElement("DIV");
+          htmlNodeBody.className = 'node-body';
+          htmlNodeBody.style.display = 'none';
+          htmlNode.appendChild(htmlNodeBody);
+
+          htmlNodeSwitch.onclick = function(event){
+            var newStyle, newContent;
+            switch (htmlNodeSwitch.innerText) {
+              case '+':
+                newStyle = '';
+                newContent = '-';
+                break;
+              case '-':
+                htmlNodeBody.style.display = 'none';
+                newContent = '+';
+                break;
+              default:
+                return;
+            }
+            htmlNodeBody.style.display = newStyle;
+            htmlNodeSwitch.innerText = newContent;
+            
+            if (htmlNodeBody.childNodes.length) {
+              return;
+            }
+            var childNodes = domNode.childNodes; 
+            var n = childNodes.length;
+            for (var i = 0; i < n; i++){
+              createTreeNode(htmlNodeBody, childNodes.item(i));
+            }        
+          };
+        }
+      }
+    </script>
+  </body>
+</html>

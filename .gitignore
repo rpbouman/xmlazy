@@ -1,0 +1,13 @@
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+package-lock.json
+__snapshots__/
+.nvmrc
+.yarn
+coverage/
+tests/w3c/xmlts20130923/*
+tests/w3c/xmlts*.zip
+test/performance/files
+tests/performance/files/*

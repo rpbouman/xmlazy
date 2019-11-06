@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Lazyx Samples: 00. Loading the Lazyx Bundle</title>
+    <script type="text/javascript" src="../3rdparty/emoji-favicon-toolkit.min.js"></script>
+    <script type="text/javascript">
+      set_emoji_favicon(emoji="🦥", cacheWithServiceWorker = false);
+    </script>
+    <style type="text/css">
+      #error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🦥 00. Loading the Lazyx Bundle</h1>
+    <a href="../index.html">Back</a>
+    <pre id="code">
+      import * as xmlazy from '/dist/xmlazy.bundle.js';
+      
+      try {
+        const xml = '<hello-world/>';
+        const saxStringReader = new xmlazy.SaxStringReader(xml);
+      } catch(e){
+        document.getElementById("error").innerText = e.message;
+      }
+    </pre>
+    <pre id="error"></pre>
+    <script>
+      try {
+        var code = document.getElementById("code").innerText;
+        var script = document.createElement("script");
+        script.type = "module";
+        script.innerText = code;
+        script.onerror = function(e){
+          document.getElementById("error").innerText = 'Error loading script.';
+        }
+        document.body.appendChild(script);
+      }
+      catch (e){
+        document.getElementById("error").innerText = e.message;
+      }
+    </script>
+  </body>
+</html>
