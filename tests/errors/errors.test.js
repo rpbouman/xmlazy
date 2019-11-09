@@ -11,15 +11,15 @@ describe('Error tests', () => {
         
         x
       `;
-      const saxStringReader = new xmlazy.SaxStringReader(xml);
-      const saxError = saxStringReader.CONTENT_FOUND_AFTER_DOCUMENT_ELEMENT_PARSE_EXCEPTION;
-      expect(saxError).toBeDefined();
+      const staxStringReader = new xmlazy.StaxStringReader(xml);
+      const staxError = staxStringReader.CONTENT_FOUND_AFTER_DOCUMENT_ELEMENT_PARSE_EXCEPTION;
+      expect(staxError).toBeDefined();
       try {
-        while (!(saxStringReader.next()).done) {};
-        throw new Error('SaxStringReader did not throw.');
+        while (!(staxStringReader.next()).done) {};
+        throw new Error('StaxStringReader did not throw.');
       }
       catch (ex) {
-        expect(ex.message).toBe(saxError);
+        expect(ex.message).toBe(staxError);
         expect(ex.isFatal).toBe(false);
       }
     });
@@ -32,15 +32,15 @@ describe('Error tests', () => {
       const xml = `
         <root>
         <`;
-      const saxStringReader = new xmlazy.SaxStringReader(xml);
-      const saxError = saxStringReader.DANGLING_LESS_THAN_PARSE_EXCEPTION;
-      expect(saxError).toBeDefined();
+      const staxStringReader = new xmlazy.StaxStringReader(xml);
+      const staxError = staxStringReader.DANGLING_LESS_THAN_PARSE_EXCEPTION;
+      expect(staxError).toBeDefined();
       try {
-        while (!(saxStringReader.next()).done) {};
-        throw new Error('SaxStringReader did not throw.');
+        while (!(staxStringReader.next()).done) {};
+        throw new Error('StaxStringReader did not throw.');
       }
       catch (ex) {
-        expect(ex.message).toBe(saxError);
+        expect(ex.message).toBe(staxError);
         expect(ex.isFatal).toBe(false);
       }
     });
@@ -53,15 +53,15 @@ describe('Error tests', () => {
       const xml = `
         <root>
         </root`;
-      const saxStringReader = new xmlazy.SaxStringReader(xml);
-      const saxError = saxStringReader.UNCLOSED_END_TAG_PARSE_EXCEPTION;
-      expect(saxError).toBeDefined();
+      const staxStringReader = new xmlazy.StaxStringReader(xml);
+      const staxError = staxStringReader.UNCLOSED_END_TAG_PARSE_EXCEPTION;
+      expect(staxError).toBeDefined();
       try {
-        while (!(saxStringReader.next()).done) {};
-        throw new Error('SaxStringReader did not throw.');
+        while (!(staxStringReader.next()).done) {};
+        throw new Error('StaxStringReader did not throw.');
       }
       catch (ex) {
-        expect(ex.message).toBe(saxError);
+        expect(ex.message).toBe(staxError);
         expect(ex.isFatal).toBe(false);
       }
     });
@@ -75,15 +75,15 @@ describe('Error tests', () => {
         <!DOCTYPE greeting SYSTEM "hello.dtd>
         <root>
         </root>`;
-      const saxStringReader = new xmlazy.SaxStringReader(xml);
-      const saxError = saxStringReader.MALFORMED_DOCTYPE_DECLARATION_PARSE_EXCEPTION;
-      expect(saxError).toBeDefined();
+      const staxStringReader = new xmlazy.StaxStringReader(xml);
+      const staxError = staxStringReader.MALFORMED_DOCTYPE_DECLARATION_PARSE_EXCEPTION;
+      expect(staxError).toBeDefined();
       try {
-        while (!(saxStringReader.next()).done) {};
-        throw new Error('SaxStringReader did not throw.');
+        while (!(staxStringReader.next()).done) {};
+        throw new Error('StaxStringReader did not throw.');
       }
       catch (ex) {
-        expect(ex.message).toBe(saxError);
+        expect(ex.message).toBe(staxError);
         expect(ex.isFatal).toBe(false);
       }
     });
@@ -98,15 +98,15 @@ describe('Error tests', () => {
         ]>
         <greeting>Hello, world!</greeting>
       `;
-      const saxStringReader = new xmlazy.SaxStringReader(xml);
-      const saxError = saxStringReader.MALFORMED_DOCTYPE_DECLARATION_PARSE_EXCEPTION;
-      expect(saxError).toBeDefined();      
+      const staxStringReader = new xmlazy.StaxStringReader(xml);
+      const staxError = staxStringReader.MALFORMED_DOCTYPE_DECLARATION_PARSE_EXCEPTION;
+      expect(staxError).toBeDefined();      
       try {
-        while (!(saxStringReader.next()).done) {};
-        throw new Error('SaxStringReader did not throw.');
+        while (!(staxStringReader.next()).done) {};
+        throw new Error('StaxStringReader did not throw.');
       }
       catch (ex) {
-        expect(ex.message).toBe(saxStringReader.MALFORMED_DOCTYPE_DECLARATION_PARSE_EXCEPTION);
+        expect(ex.message).toBe(staxStringReader.MALFORMED_DOCTYPE_DECLARATION_PARSE_EXCEPTION);
         expect(ex.isFatal).toBe(false);
       }
     });
@@ -119,15 +119,15 @@ describe('Error tests', () => {
         <!
         <greeting>Hello, world!</greeting>
       `;
-      const saxStringReader = new xmlazy.SaxStringReader(xml);
-      const saxError = saxStringReader.EXPECTED_COMMENT_CDATA_DOCTYPE_PARSE_ERROR;
-      expect(saxError).toBeDefined();      
+      const staxStringReader = new xmlazy.StaxStringReader(xml);
+      const staxError = staxStringReader.EXPECTED_COMMENT_CDATA_DOCTYPE_PARSE_ERROR;
+      expect(staxError).toBeDefined();      
       try {
-        while (!(saxStringReader.next()).done) {};
-        throw new Error('SaxStringReader did not throw.');
+        while (!(staxStringReader.next()).done) {};
+        throw new Error('StaxStringReader did not throw.');
       }
       catch (ex) {
-        expect(ex.message).toBe(saxError);
+        expect(ex.message).toBe(staxError);
         expect(ex.isFatal).toBe(true);
       }
     });
@@ -140,15 +140,15 @@ describe('Error tests', () => {
         <!--
         <greeting>Hello, world!</greeting>
       `;
-      const saxStringReader = new xmlazy.SaxStringReader(xml);
-      const saxError = saxStringReader.UNCLOSED_COMMENT_PARSE_EXCEPTION;
-      expect(saxError).toBeDefined();      
+      const staxStringReader = new xmlazy.StaxStringReader(xml);
+      const staxError = staxStringReader.UNCLOSED_COMMENT_PARSE_EXCEPTION;
+      expect(staxError).toBeDefined();      
       try {
-        while (!(saxStringReader.next()).done) {};
-        throw new Error('SaxStringReader did not throw.');
+        while (!(staxStringReader.next()).done) {};
+        throw new Error('StaxStringReader did not throw.');
       }
       catch (ex) {
-        expect(ex.message).toBe(saxError);
+        expect(ex.message).toBe(staxError);
         expect(ex.isFatal).toBe(false);
       }
     });
@@ -161,15 +161,15 @@ describe('Error tests', () => {
         <![CDATA[ 
         <greeting>Hello, world!</greeting>
       `;
-      const saxStringReader = new xmlazy.SaxStringReader(xml);
-      const saxError = saxStringReader.UNCLOSED_CDATA_PARSE_EXCEPTION;
-      expect(saxError).toBeDefined();      
+      const staxStringReader = new xmlazy.StaxStringReader(xml);
+      const staxError = staxStringReader.UNCLOSED_CDATA_PARSE_EXCEPTION;
+      expect(staxError).toBeDefined();      
       try {
-        while (!(saxStringReader.next()).done) {};
-        throw new Error('SaxStringReader did not throw.');
+        while (!(staxStringReader.next()).done) {};
+        throw new Error('StaxStringReader did not throw.');
       }
       catch (ex) {
-        expect(ex.message).toBe(saxError);
+        expect(ex.message).toBe(staxError);
         expect(ex.isFatal).toBe(false);
       }
     });
@@ -181,15 +181,15 @@ describe('Error tests', () => {
         <?xml version="1.0" encoding="UTF-8" ?
         <greeting>Hello, world!</greeting>
       `;
-      const saxStringReader = new xmlazy.SaxStringReader(xml);
-      const saxError = saxStringReader.UNCLOSED_PROCESSING_INSTRUCTION_PARSE_EXCEPTION;
-      expect(saxError).toBeDefined();      
+      const staxStringReader = new xmlazy.StaxStringReader(xml);
+      const staxError = staxStringReader.UNCLOSED_PROCESSING_INSTRUCTION_PARSE_EXCEPTION;
+      expect(staxError).toBeDefined();      
       try {
-        while (!(saxStringReader.next()).done) {};
-        throw new Error('SaxStringReader did not throw.');
+        while (!(staxStringReader.next()).done) {};
+        throw new Error('StaxStringReader did not throw.');
       }
       catch (ex) {
-        expect(ex.message).toBe(saxError);
+        expect(ex.message).toBe(staxError);
         expect(ex.isFatal).toBe(false);
       }
     });
@@ -201,15 +201,15 @@ describe('Error tests', () => {
         <?xml version="1.0" encoding="UTF-8" ?>
         <greeting
       `;
-      const saxStringReader = new xmlazy.SaxStringReader(xml);
-      const saxError = saxStringReader.UNCLOSED_ELEMENT_START_TAG_PARSE_EXCEPTION;
-      expect(saxError).toBeDefined();      
+      const staxStringReader = new xmlazy.StaxStringReader(xml);
+      const staxError = staxStringReader.UNCLOSED_ELEMENT_START_TAG_PARSE_EXCEPTION;
+      expect(staxError).toBeDefined();      
       try {
-        while (!(saxStringReader.next()).done) {};
-        throw new Error('SaxStringReader did not throw.');
+        while (!(staxStringReader.next()).done) {};
+        throw new Error('StaxStringReader did not throw.');
       }
       catch (ex) {
-        expect(ex.message).toBe(saxError);
+        expect(ex.message).toBe(staxError);
         expect(ex.isFatal).toBe(false);
       }
     });
@@ -219,15 +219,15 @@ describe('Error tests', () => {
         <?xml version="1.0" encoding="UTF-8" ?>
         <greeting</greeting>       
       `;
-      const saxStringReader = new xmlazy.SaxStringReader(xml);
-      const saxError = saxStringReader.UNCLOSED_ELEMENT_START_TAG_PARSE_ERROR;
-      expect(saxError).toBeDefined();      
+      const staxStringReader = new xmlazy.StaxStringReader(xml);
+      const staxError = staxStringReader.UNCLOSED_ELEMENT_START_TAG_PARSE_ERROR;
+      expect(staxError).toBeDefined();      
       try {
-        while (!(saxStringReader.next()).done) {};
-        throw new Error('SaxStringReader did not throw.');
+        while (!(staxStringReader.next()).done) {};
+        throw new Error('StaxStringReader did not throw.');
       }
       catch (ex) {
-        expect(ex.message).toBe(saxError);
+        expect(ex.message).toBe(staxError);
         expect(ex.isFatal).toBe(true);
       }
     });

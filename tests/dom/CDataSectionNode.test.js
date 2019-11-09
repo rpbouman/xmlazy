@@ -5,16 +5,16 @@ describe('CData Section', () => {
   const text = 'world';
   const cdata = `<![CDATA[${text}]]>`;
   let 
-    saxStringReader, saxResult, 
+    staxStringReader, staxResult, 
     xml, elementNode, cdataSectionNode
   ; 
   beforeAll(() => {
     xml = `<hello>${cdata}</hello>`;
-    saxStringReader = new xmlazy.SaxStringReader(xml, {chainNodes: true});
-    saxResult = saxStringReader.next();
-    elementNode = saxResult.value;
-    saxResult = saxStringReader.next();
-    cdataSectionNode = saxResult.value;
+    staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+    staxResult = staxStringReader.next();
+    elementNode = staxResult.value;
+    staxResult = staxStringReader.next();
+    cdataSectionNode = staxResult.value;
   });
 
   it('nodeType is 4', () => {

@@ -12,7 +12,7 @@ import { createDOMDocumentPrototype } from '../dom/DomDocumentNode.js';
 
 var defaultOptions = {};
 
-var SaxStringReader = function(string, options){
+var StaxStringReader = function(string, options){
   _string: switch (typeof string) {
     case 'string':
       switch (typeof options) {
@@ -77,7 +77,7 @@ var SaxStringReader = function(string, options){
   }
 };
 
-SaxStringReader.prototype = {
+StaxStringReader.prototype = {
   CONTENT_FOUND_AFTER_DOCUMENT_ELEMENT_PARSE_EXCEPTION: 'Exception: Non-whitespace content found after the document element.',
   DANGLING_LESS_THAN_PARSE_EXCEPTION: 'Exception: Dangling < at end of input',
   UNCLOSED_END_TAG_PARSE_EXCEPTION: 'Exception: Unclosed element end tag.',
@@ -388,4 +388,4 @@ SaxStringReader.prototype = {
   }
 };
 
-export { SaxStringReader };
+export { StaxStringReader };

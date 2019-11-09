@@ -8,11 +8,11 @@ describe('Document Type Node', () => {
       ${docTypeXml}
       <greeting>Hello, world!</greeting>
     `;
-    let saxStringReader, saxResult, documentNode, docTypeNode;
+    let staxStringReader, staxResult, documentNode, docTypeNode;
     
     beforeAll(() => {
-      saxStringReader = new xmlazy.SaxStringReader(xml);
-      documentNode = saxStringReader.buildDocument();
+      staxStringReader = new xmlazy.StaxStringReader(xml);
+      documentNode = staxStringReader.buildDocument();
       docTypeNode = documentNode.docType;
     });
 

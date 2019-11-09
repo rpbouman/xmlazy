@@ -1,1 +1,1 @@
-export * from './sax/SaxStringReader.js';
+export * from './stax/StaxStringReader.js';

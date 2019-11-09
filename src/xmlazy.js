@@ -1,5 +1,5 @@
-import { SaxStringReader } from './sax/SaxStringReader.js';
+import { StaxStringReader } from './stax/StaxStringReader.js';
 
 module.exports = {
-  SaxStringReader: SaxStringReader
+  StaxStringReader: StaxStringReader
 };
