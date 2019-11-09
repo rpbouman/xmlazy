@@ -113,6 +113,23 @@ StaxStringReader.prototype = {
   getDocumentNode: function(){
     return this.docNode;
   },
+  getCurrentNamespaceContext: function(){
+    return this.nsContext;
+  },
+  parseAndCallback: function(handler){
+    var result;
+    if (this.index === 0) {
+      if (handler.call(null, this.getDocumentNode()) === false) {
+        return;
+      }
+    }
+    while (!(result = this.next()).done) {
+      if (handler.call(null, result.value) === false) {
+        return;
+      }
+    }
+    handler.call(null, {nodeType: -this.baseNode.DOCUMENT_NODE});
+  },
   buildDocument: function(){
     if (this.index !== 0) {
       throw new Error('Cannot build document after initiating iteration.');
