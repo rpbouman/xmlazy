@@ -123,6 +123,7 @@ StaxStringReader.prototype = {
         return;
       }
     }
+    // eslint-disable-next-line no-cond-assign
     while (!(result = this.next()).done) {
       if (handler.call(null, result.value) === false) {
         return;
