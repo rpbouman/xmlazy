@@ -3,8 +3,8 @@ import * as xmlazy from '../../src/xmlazy.js';
 describe('StaxStringReader', () => {
   
   it('Can instantiate a StaxStringReader', () => {
-    var StaxStringReader = new xmlazy.StaxStringReader('');
-    expect(StaxStringReader).toBeDefined();
+    var staxStringReader = new xmlazy.StaxStringReader('');
+    expect(staxStringReader).toBeDefined();
   });
 
   describe('Detect open element tags that miss their >', () => {
