@@ -1,10 +1,10 @@
 import * as xmlazy from '../src/xmlazy.js';
 
 
-describe("SaxStringReader", () => {
+describe("StaxStringReader", () => {
 
-  it("Can instantiate a SaxStringReader", () => {
-    const saxStringReader = new xmlazy.SaxStringReader('<hello/>');
+  it("Can instantiate a StaxStringReader", () => {
+    const staxStringReader = new xmlazy.StaxStringReader('<hello/>');
   });
 
 });

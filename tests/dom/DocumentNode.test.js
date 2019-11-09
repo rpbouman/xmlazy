@@ -4,11 +4,11 @@ describe('Document Node', () => {
 
   const tagname = 'hello';
   const xml = `<${tagname}>`;
-  let saxStringReader, saxResult, documentNode, elementNode;
+  let staxStringReader, staxResult, documentNode, elementNode;
   
   beforeAll(() => {
-    saxStringReader = new xmlazy.SaxStringReader(xml);
-    documentNode = saxStringReader.buildDocument();
+    staxStringReader = new xmlazy.StaxStringReader(xml);
+    documentNode = staxStringReader.buildDocument();
   });
 
   describe('Basic doc node tests', () =>{

@@ -43,18 +43,18 @@ describe('Attributes', () => {
   describe('General attributes test', () => {
     const tagname = 'hello';
     const xml = `<${tagname} xmlns:${prefix}="${namespace}" ${attributes}>`;
-    let saxStringReader, saxResult, elementNode; 
+    let staxStringReader, staxResult, elementNode; 
 
     beforeAll(() => {
-      saxStringReader = new xmlazy.SaxStringReader(xml);
-      saxResult = saxStringReader.next();
-      elementNode = saxResult.value;
+      staxStringReader = new xmlazy.StaxStringReader(xml);
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
     });
 
     it('Can parse an element open tag with attributes', () => {
-      expect(saxResult.done).toBe(false);
-      saxStringReader.next();
-      expect(saxResult.done).toBe(true);
+      expect(staxResult.done).toBe(false);
+      staxStringReader.next();
+      expect(staxResult.done).toBe(true);
     });
 
     it(`hasAttributes is true`, () => {

@@ -10,11 +10,11 @@ describe('Namespace tests', () => {
     
     let elementNode;
     beforeAll(() => {
-      const saxStringReader = new xmlazy.SaxStringReader(xml, {chainNodes: true});
-      let saxReaderResult;
-      saxReaderResult = saxStringReader.next();
-      saxReaderResult = saxStringReader.next();
-      elementNode = saxReaderResult.value;
+      const staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      let staxReaderResult;
+      staxReaderResult = staxStringReader.next();
+      staxReaderResult = staxStringReader.next();
+      elementNode = staxReaderResult.value;
     });
 
     it('Can correctly lookup the null prefix for the empty/null namespace', () => {    
@@ -36,11 +36,11 @@ describe('Namespace tests', () => {
     
     let elementNode;
     beforeAll(() => {
-      const saxStringReader = new xmlazy.SaxStringReader(xml, {chainNodes: true});
-      let saxReaderResult;
-      saxReaderResult = saxStringReader.next();
-      saxReaderResult = saxStringReader.next();
-      elementNode = saxReaderResult.value;
+      const staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      let staxReaderResult;
+      staxReaderResult = staxStringReader.next();
+      staxReaderResult = staxStringReader.next();
+      elementNode = staxReaderResult.value;
     });
 
     it('Can correctly lookup the null prefix for the "http://top.ns.com/" namespace', () => {    
@@ -65,11 +65,11 @@ describe('Namespace tests', () => {
     
     let elementNode;
     beforeAll(() => {
-      const saxStringReader = new xmlazy.SaxStringReader(xml, {chainNodes: true});
-      let saxReaderResult;
-      saxReaderResult = saxStringReader.next();
-      saxReaderResult = saxStringReader.next();
-      elementNode = saxReaderResult.value;
+      const staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      let staxReaderResult;
+      staxReaderResult = staxStringReader.next();
+      staxReaderResult = staxStringReader.next();
+      elementNode = staxReaderResult.value;
     });
 
     it('Can correctly lookup the "pr" prefix for the "http://top.ns.com/" namespace', () => {    
@@ -98,11 +98,11 @@ describe('Namespace tests', () => {
     
     let elementNode;
     beforeAll(() => {
-      const saxStringReader = new xmlazy.SaxStringReader(xml, {chainNodes: true});
-      let saxReaderResult;
-      saxReaderResult = saxStringReader.next();
-      saxReaderResult = saxStringReader.next();
-      elementNode = saxReaderResult.value;
+      const staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      let staxReaderResult;
+      staxReaderResult = staxStringReader.next();
+      staxReaderResult = staxStringReader.next();
+      elementNode = staxReaderResult.value;
     });
 
     it('Namespace declaration does not appear in attributes', () => {    
@@ -145,11 +145,11 @@ describe('Namespace tests', () => {
     
     let elementNode;
     beforeAll(() => {
-      const saxStringReader = new xmlazy.SaxStringReader(xml, {chainNodes: true});
-      let saxReaderResult;
-      saxReaderResult = saxStringReader.next();
-      saxReaderResult = saxStringReader.next();
-      elementNode = saxReaderResult.value;
+      const staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      let staxReaderResult;
+      staxReaderResult = staxStringReader.next();
+      staxReaderResult = staxStringReader.next();
+      elementNode = staxReaderResult.value;
     });
 
     it('Namespace declaration does not appear in attributes', () => {    
@@ -177,11 +177,11 @@ describe('Namespace tests', () => {
     
     let elementNode;
     beforeAll(() => {
-      const saxStringReader = new xmlazy.SaxStringReader(xml, {chainNodes: true});
-      let saxReaderResult;
-      saxReaderResult = saxStringReader.next();
-      saxReaderResult = saxStringReader.next();
-      elementNode = saxReaderResult.value;
+      const staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      let staxReaderResult;
+      staxReaderResult = staxStringReader.next();
+      staxReaderResult = staxStringReader.next();
+      elementNode = staxReaderResult.value;
     });
 
     it('Can correctly lookup the "pr" prefix for the "http://prefixed.ns.com/" namespace', () => {    
@@ -233,11 +233,11 @@ describe('Namespace tests', () => {
     
     let elementNode;
     beforeAll(() => {
-      const saxStringReader = new xmlazy.SaxStringReader(xml, {chainNodes: true});
-      let saxReaderResult;
-      saxReaderResult = saxStringReader.next();
-      saxReaderResult = saxStringReader.next();
-      elementNode = saxReaderResult.value;
+      const staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      let staxReaderResult;
+      staxReaderResult = staxStringReader.next();
+      staxReaderResult = staxStringReader.next();
+      elementNode = staxReaderResult.value;
     });
 
   });
@@ -256,8 +256,8 @@ describe('Namespace tests', () => {
     
     let documentNode, documentElement, textNode;
     beforeAll(() => {
-      const saxStringReader = new xmlazy.SaxStringReader(xml, {chainNodes: true});
-      documentNode = saxStringReader.buildDocument();
+      const staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      documentNode = staxStringReader.buildDocument();
       documentElement = documentNode.documentElement;
       textNode = documentElement.childNodes.item(0);
     });

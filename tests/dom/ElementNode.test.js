@@ -23,18 +23,18 @@ describe('Element open tag', () => {
   describe('Without prefix', () => {
     const tagname = 'hello';
     const xml = `<${tagname}>`;
-    let saxStringReader, saxResult, elementNode; 
+    let staxStringReader, staxResult, elementNode; 
 
     beforeAll(() => {
-      saxStringReader = new xmlazy.SaxStringReader(xml);
-      saxResult = saxStringReader.next();
-      elementNode = saxResult.value;
+      staxStringReader = new xmlazy.StaxStringReader(xml);
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
     });
 
     it('Can parse an element open tag', () => {
-      expect(saxResult.done).toBe(false);
-      saxStringReader.next();
-      expect(saxResult.done).toBe(true);
+      expect(staxResult.done).toBe(false);
+      staxStringReader.next();
+      expect(staxResult.done).toBe(true);
     });
 
     it('nodeType is 1', () => {
@@ -82,18 +82,18 @@ describe('Element open tag', () => {
   describe('Without prefix, with attributes', () => {
     const tagname = 'hello';
     const xml = `<${tagname} ${attributes}>`;
-    let saxStringReader, saxResult, elementNode; 
+    let staxStringReader, staxResult, elementNode; 
 
     beforeAll(() => {
-      saxStringReader = new xmlazy.SaxStringReader(xml);
-      saxResult = saxStringReader.next();
-      elementNode = saxResult.value;
+      staxStringReader = new xmlazy.StaxStringReader(xml);
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
     });
 
     it('Can parse an element open tag with attributes', () => {
-      expect(saxResult.done).toBe(false);
-      saxStringReader.next();
-      expect(saxResult.done).toBe(true);
+      expect(staxResult.done).toBe(false);
+      staxStringReader.next();
+      expect(staxResult.done).toBe(true);
     });
 
     it(`hasAttributes is true`, () => {
@@ -115,18 +115,18 @@ describe('Element open tag', () => {
     const localName = 'hello'
     const tagname = `${prefix}:${localName}`;
     const xml = `<${tagname}>`;
-    let saxStringReader, saxResult, elementNode;
+    let staxStringReader, staxResult, elementNode;
     
     beforeAll(() => {
-      saxStringReader = new xmlazy.SaxStringReader(xml);
-      saxResult = saxStringReader.next();
-      elementNode = saxResult.value;
+      staxStringReader = new xmlazy.StaxStringReader(xml);
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
     });
     
     it('Can parse an element open tag', () => {
-      expect(saxResult.done).toBe(false);
-      saxStringReader.next();
-      expect(saxResult.done).toBe(true);
+      expect(staxResult.done).toBe(false);
+      staxStringReader.next();
+      expect(staxResult.done).toBe(true);
     });
 
     it('nodeType is 1', () => {
@@ -176,18 +176,18 @@ describe('Element open tag', () => {
     const localName = 'hello'
     const tagname = `${prefix}:${localName}`;
     const xml = `<${tagname} ${attributes}>`;
-    let saxStringReader, saxResult, elementNode; 
+    let staxStringReader, staxResult, elementNode; 
 
     beforeAll(() => {
-      saxStringReader = new xmlazy.SaxStringReader(xml);
-      saxResult = saxStringReader.next();
-      elementNode = saxResult.value;
+      staxStringReader = new xmlazy.StaxStringReader(xml);
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
     });
 
     it('Can parse an element open tag with attributes', () => {
-      expect(saxResult.done).toBe(false);
-      saxStringReader.next();
-      expect(saxResult.done).toBe(true);
+      expect(staxResult.done).toBe(false);
+      staxStringReader.next();
+      expect(staxResult.done).toBe(true);
     });
 
     it(`hasAttributes is true`, () => {

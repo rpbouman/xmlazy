@@ -5,14 +5,14 @@ describe('ChildNodes', () => {
   describe('Document ChildNodesIterator', () => {
 
     it('Can iterate children of simple shallow document', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <!-- Here's my document -->
         <?xml version="1.0"?>
         <hello/>
         <!-- That was my document -->
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var childNodeResult, childNodeIterator = doc.getChildNodeIterator();
       var i = 0;
       var data = [
@@ -38,7 +38,7 @@ describe('ChildNodes', () => {
     });
     
     it('Can iterate children of a document with a document element with text content', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <!-- Here's my document -->
         <?xml version="1.0"?>
         <hello>
@@ -46,7 +46,7 @@ describe('ChildNodes', () => {
         <!-- That was my document -->
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var childNodeResult, childNodeIterator = doc.getChildNodeIterator();
       var i = 0;
       var data = [
@@ -72,7 +72,7 @@ describe('ChildNodes', () => {
     });
     
     it('Can iterate children of a document with a document element with element content', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <!-- Here's my document -->
         <?xml version="1.0"?>
         <hello>
@@ -81,7 +81,7 @@ describe('ChildNodes', () => {
         <!-- That was my document -->
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var childNodeResult, childNodeIterator = doc.getChildNodeIterator();
       var i = 0;
       var data = [
@@ -107,7 +107,7 @@ describe('ChildNodes', () => {
     });
 
     it('Can iterate children of a document with a document element with nested element content', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <!-- Here's my document -->
         <?xml version="1.0"?>
         <hello>
@@ -124,7 +124,7 @@ describe('ChildNodes', () => {
         <!-- That was my document -->
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var childNodeResult, childNodeIterator = doc.getChildNodeIterator();
       var i = 0;
       var data = [
@@ -154,7 +154,7 @@ describe('ChildNodes', () => {
   describe('Document Element ChildNodesIterator', () => {
 
     it('Can iterate children of simple shallow element', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <root>
           <!-- Here's my document -->
           <?xml version="1.0"?>
@@ -163,7 +163,7 @@ describe('ChildNodes', () => {
         </root>
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var docElement = doc.documentElement;
       var childNodeResult, childNodeIterator = docElement.getChildNodeIterator();
       var i = 0;
@@ -190,7 +190,7 @@ describe('ChildNodes', () => {
     });
     
     it('Can iterate children of an element with text content', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <root>
           <!-- Here's my document -->
           <?xml version="1.0"?>
@@ -200,7 +200,7 @@ describe('ChildNodes', () => {
         </root>
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var docElement = doc.documentElement;
       var childNodeResult, childNodeIterator = docElement.getChildNodeIterator();
       var i = 0;
@@ -227,7 +227,7 @@ describe('ChildNodes', () => {
     });
     
     it('Can iterate children of an element with element content', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <root>
           <!-- Here's my document -->
           <?xml version="1.0"?>
@@ -238,7 +238,7 @@ describe('ChildNodes', () => {
         </root>
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var docElement = doc.documentElement;
       var childNodeResult, childNodeIterator = docElement.getChildNodeIterator();
       var i = 0;
@@ -265,7 +265,7 @@ describe('ChildNodes', () => {
     });
 
     it('Can iterate children of an element with nested element content', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <root>
           <!-- Here's my document -->
           <?xml version="1.0"?>
@@ -284,7 +284,7 @@ describe('ChildNodes', () => {
         </root>
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var docElement = doc.documentElement;
       var childNodeResult, childNodeIterator = docElement.getChildNodeIterator();
       var i = 0;
@@ -315,14 +315,14 @@ describe('ChildNodes', () => {
   describe('Document childNodes node list', () => {
 
     it('Can iterate children of simple shallow document', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <!-- Here's my document -->
         <?xml version="1.0"?>
         <hello/>
         <!-- That was my document -->
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var data = [
         {nodeType: 3},
         {nodeType: 8, sourceXml: "<!-- Here's my document -->" },
@@ -347,7 +347,7 @@ describe('ChildNodes', () => {
     });
     
     it('Can iterate children of a document with a document element with text content', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <!-- Here's my document -->
         <?xml version="1.0"?>
         <hello>
@@ -355,7 +355,7 @@ describe('ChildNodes', () => {
         <!-- That was my document -->
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var data = [
         {nodeType: 3},
         {nodeType: 8, sourceXml: "<!-- Here's my document -->" },
@@ -380,7 +380,7 @@ describe('ChildNodes', () => {
     });
     
     it('Can iterate children of a document with a document element with element content', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <!-- Here's my document -->
         <?xml version="1.0"?>
         <hello>
@@ -389,7 +389,7 @@ describe('ChildNodes', () => {
         <!-- That was my document -->
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var data = [
         {nodeType: 3},
         {nodeType: 8, sourceXml: "<!-- Here's my document -->" },
@@ -414,7 +414,7 @@ describe('ChildNodes', () => {
     });
 
     it('Can iterate children of a document with a document element with nested element content', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <!-- Here's my document -->
         <?xml version="1.0"?>
         <hello>
@@ -431,7 +431,7 @@ describe('ChildNodes', () => {
         <!-- That was my document -->
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var data = [
         {nodeType: 3},
         {nodeType: 8, sourceXml: "<!-- Here's my document -->" },
@@ -460,7 +460,7 @@ describe('ChildNodes', () => {
   describe('Document Element childNodes node list', () => {
 
     it('Can iterate children of simple shallow element', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <root>
           <!-- Here's my document -->
           <?xml version="1.0"?>
@@ -469,7 +469,7 @@ describe('ChildNodes', () => {
         </root>
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var docElement = doc.documentElement;
       var data = [
         {nodeType: 3},
@@ -495,7 +495,7 @@ describe('ChildNodes', () => {
     });
     
     it('Can iterate children of an element with text content', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <root>
           <!-- Here's my document -->
           <?xml version="1.0"?>
@@ -505,7 +505,7 @@ describe('ChildNodes', () => {
         </root>
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var docElement = doc.documentElement;
       var data = [
         {nodeType: 3},
@@ -531,7 +531,7 @@ describe('ChildNodes', () => {
     });
     
     it('Can iterate children of an element with element content', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <root>
           <!-- Here's my document -->
           <?xml version="1.0"?>
@@ -542,7 +542,7 @@ describe('ChildNodes', () => {
         </root>
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var docElement = doc.documentElement;
       var data = [
         {nodeType: 3},
@@ -568,7 +568,7 @@ describe('ChildNodes', () => {
     });
 
     it('Can iterate children of an element with nested element content', () => {
-      var saxStringReader = new xmlazy.SaxStringReader(`
+      var staxStringReader = new xmlazy.StaxStringReader(`
         <root>
           <!-- Here's my document -->
           <?xml version="1.0"?>
@@ -587,7 +587,7 @@ describe('ChildNodes', () => {
         </root>
       `);
       
-      var doc = saxStringReader.buildDocument();
+      var doc = staxStringReader.buildDocument();
       var docElement = doc.documentElement;
       var data = [
         {nodeType: 3},

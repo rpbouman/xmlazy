@@ -5,16 +5,16 @@ describe('Comment', () => {
   const text = 'world';
   const comment = `<!--${text}-->`;
   let 
-    saxStringReader, saxResult, 
+    staxStringReader, staxResult, 
     xml, elementNode, commentSectionNode
   ; 
   beforeAll(() => {
     xml = `<hello>${comment}</hello>`;
-    saxStringReader = new xmlazy.SaxStringReader(xml, {chainNodes: true});
-    saxResult = saxStringReader.next();
-    elementNode = saxResult.value;
-    saxResult = saxStringReader.next();
-    commentSectionNode = saxResult.value;
+    staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+    staxResult = staxStringReader.next();
+    elementNode = staxResult.value;
+    staxResult = staxStringReader.next();
+    commentSectionNode = staxResult.value;
   });
 
   it('nodeType is 8', () => {

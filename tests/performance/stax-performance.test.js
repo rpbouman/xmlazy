@@ -53,14 +53,14 @@ describe("Performance tests", () => {
       const fstats = fs.statSync(fileName)
       const xml = await readFile(fileName);
       const start = Date.now();
-      let saxReaderResult, count = 0;
-      const saxStringReader = new xmlazy.SaxStringReader(xml);
-      while (!(saxReaderResult = saxStringReader.next()).done){
+      let staxReaderResult, count = 0;
+      const staxStringReader = new xmlazy.StaxStringReader(xml);
+      while (!(staxReaderResult = staxStringReader.next()).done){
         count += 1
       }
       const end = Date.now();
       const expired = end - start;
-      console.log(`${fileName}: parsed ${fstats.size} bytes (${xml.length} chars) into ${count} sax events in ${expired}ms. ${Math.round(xml.length/expired)} chars/ms, ${Math.round(count/expired)} events/ms.`);
+      console.log(`${fileName}: parsed ${fstats.size} bytes (${xml.length} chars) into ${count} stax events in ${expired}ms. ${Math.round(xml.length/expired)} chars/ms, ${Math.round(count/expired)} events/ms.`);
       const memoryAfter = process.memoryUsage();
       const memoryDiff = {};
       for (let p in memoryAfter) {
@@ -98,14 +98,14 @@ describe("Performance tests", () => {
     test.each(fileNames)('Parse %s', async (fileName) => {
       const xml = await readFile(fileName);
       const start = Date.now();
-      let saxReaderResult, count = 0;
-      const saxStringReader = new xmlazy.SaxStringReader(xml, {chaiNodes: true});
-      while (!(saxReaderResult = saxStringReader.next()).done){
+      let staxReaderResult, count = 0;
+      const staxStringReader = new xmlazy.StaxStringReader(xml, {chaiNodes: true});
+      while (!(staxReaderResult = staxStringReader.next()).done){
         count += 1
       }
       const end = Date.now();
       const expired = end - start;
-      console.log(`${fileName}: parsed ${xml.length} chars into ${count} sax events in ${expired}ms. ${Math.round(xml.length/expired)} chars/ms, ${Math.round(count/expired)} events/ms.`);
+      console.log(`${fileName}: parsed ${xml.length} chars into ${count} stax events in ${expired}ms. ${Math.round(xml.length/expired)} chars/ms, ${Math.round(count/expired)} events/ms.`);
     });
     
   });
