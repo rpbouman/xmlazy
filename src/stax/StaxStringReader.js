@@ -63,6 +63,12 @@ var StaxStringReader = function(string, options){
   if (this.options.chainNodes) {
     this.chainNodes = this.options.chainNodes;
   }
+  if (this.options.saxHandler) {
+    if (typeof(this.options.saxHandler) !== 'function'){
+      this.throwError(`config option saxHandler must be a function.`);
+    }
+    this.saxHandler = this.options.saxHandler;
+  }
   this.result = {
     done: false,
     value: undefined
@@ -70,8 +76,7 @@ var StaxStringReader = function(string, options){
   this.endElementDetector = /[^\s>"']+(\s*[^\s<>'"]+\s*=\s*('[^<']*'|"[^<"]*"))?\s*\/?>/g;
   this.documentTypePattern = /^<!DOCTYPE\s+[^\s[>]+(\s+(SYSTEM|PUBLIC\s+("[^"]*"|'[^']*'))\s+("[^"]*"|'[^']*'))?\s*(\[(<!ELEMENT\s+[^\s>]+(\s+[^\s>]+)*\s*>|<!ATTLIST\s+[^\s>]+(\s+[^\s>]+\s+(CDATA|ID(REFS?)?|ENTIT(Y|IES)|NMTOKENS?|NOTATION\s+\(\s*[^\s|)]+(\s*\|\s*[^)|>(\s]+)*\s*\)|\(\s*[^()|\s>]+(\s*\|\s*[^()|\s>]+)*\s*\))\s+(#REQUIRED|#IMPLIED|((#FIXED\s+)?("[^"]+"|'[^']+'))))*\s*>|<!ENTITY\s+([^\s]+\s+(("[^"]*"|'[^']*')|(SYSTEM|PUBLIC\s+("[^"]*"|'[^']*')(\s+NDATA\s+[^s]+)?)\s+("[^"]*"|'[^']*'))|%\s+[^s]+\s(("[^"]*"|'[^']*')|(SYSTEM|PUBLIC\s+("[^"]*"|'[^']*'))\s+("[^"]*"|'[^']*')))\s*>|<!NOTATION\s+[^\s]+\s+()\s*>|<\?[^?]+\?>|<!--([^-]|-[^-])*-->|%[^;]+;|\s+)*]*\]\s*)?>/;
 
-  this.nsContext = {'': null};
-  
+  this.reset();
   if (string !== undefined) {
     this.setString(string);
   }
@@ -105,6 +110,14 @@ StaxStringReader.prototype = {
       this.result.value = this.baseNode.d = this.docNode = docNode;
     }
   },
+  reset: function(string){
+    this.nsContext = {'': null};
+    this.isReset = true;
+    this.docNode = null;
+    if (string !== undefined){
+      this.setString(string);
+    }
+  },
   setString: function(string){
     this.string = string;
     this.index = 0;
@@ -117,11 +130,24 @@ StaxStringReader.prototype = {
     return this.nsContext;
   },
   parseAndCallback: function(handler){
+    switch (typeof(handler)) {
+      case 'undefined':
+        if (this.saxHandler === undefined) {
+          this.throwError(`No handler passed and no saxHandler configured via options.`)
+        }
+        handler = this.saxHandler;
+        break;
+      case 'function':
+        break;
+      default:
+        this.throwError(`Handler must be a function`)
+    }
     var result;
-    if (this.index === 0) {
+    if (this.isReset === true) {
       if (handler.call(null, this.getDocumentNode()) === false) {
         return;
       }
+      this.isReset = false;
     }
     // eslint-disable-next-line no-cond-assign
     while (!(result = this.next()).done) {
