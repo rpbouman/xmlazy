@@ -1,6 +1,6 @@
 import * as xmlazy from '../../src/xmlazy.js';
 
-describe('Namespace tests', () => {
+describe('DOM (chained nodes) Namespace tests', () => {
 
   describe('Doc without namespace declarations', () => {
     const xml = `
@@ -260,18 +260,39 @@ describe('Namespace tests', () => {
         pr:att2="in the http://prefixed.ns.com/ namespace"
         xmlns:pr="http://prefixed.ns.com/"
       >
+        <child 
+          att1="value1"
+          pr:att2="value2"
+        />
       </root>
     `;
     
-    let elementNode;
+    let elementNode, childElementNode;
     beforeAll(() => {
       const staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
       let staxReaderResult;
+
       staxReaderResult = staxStringReader.next();
       staxReaderResult = staxStringReader.next();
       elementNode = staxReaderResult.value;
-    });
 
+      staxReaderResult = staxStringReader.next();
+      staxReaderResult = staxStringReader.next();
+      childElementNode = staxReaderResult.value;
+    });
+    
+    it('document element is in the namespace http://default.ns.com/', () => {
+      expect(elementNode.namespaceURI).toBe('http://default.ns.com/');
+    });
+    it('Childelement is in the namespace of the document element', () => {
+      expect(childElementNode.namespaceURI).toBe(elementNode.namespaceURI);
+    });
+    it('Attribute att1 of Childelement is in the null namespace', () => {
+      expect(childElementNode.attributes.item(0).namespaceURI).toBe(null);
+    });
+    it('Attribute pr:att2 of Childelement is in the namespace http://prefixed.ns.com/', () => {
+      expect(childElementNode.attributes.item(1).namespaceURI).toBe('http://prefixed.ns.com/');
+    });
   });
   
   describe('Doc with one unprefixed and one prefixed namespace declaration with a text content', () => {

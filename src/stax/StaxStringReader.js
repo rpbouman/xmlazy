@@ -65,7 +65,7 @@ var StaxStringReader = function(string, options){
   }
   if (this.options.saxHandler) {
     if (typeof(this.options.saxHandler) !== 'function'){
-      this.throwError(`config option saxHandler must be a function.`);
+      this.throwError('config option saxHandler must be a function.');
     }
     this.saxHandler = this.options.saxHandler;
   }
@@ -133,14 +133,14 @@ StaxStringReader.prototype = {
     switch (typeof(handler)) {
       case 'undefined':
         if (this.saxHandler === undefined) {
-          this.throwError(`No handler passed and no saxHandler configured via options.`)
+          this.throwError('No handler passed and no saxHandler configured via options.');
         }
         handler = this.saxHandler;
         break;
       case 'function':
         break;
       default:
-        this.throwError(`Handler must be a function`)
+        this.throwError('Handler must be a function');
     }
     var result;
     if (this.isReset === true) {
@@ -412,21 +412,27 @@ StaxStringReader.prototype = {
       }
     }
     
-    result.value = (this.chainNodes) ? (result.value.n = {
-      b: index,
-      E: endIndex,
-      p: result.value,
-      __proto__: proto
-    }) : {
-      b: index,
-      E: endIndex,
-      __proto__: proto
-    };
+    if (this.chainNodes) {
+      result.value = (result.value.n = {
+        b: index,
+        E: endIndex,
+        p: result.value,
+        __proto__: proto
+      });
+      if (nsContext !== undefined) {
+        result.value.X = nsContext;
+      }
+    }
+    else {
+      result.value = {
+        b: index,
+        E: endIndex,
+        X: (nsContext || this.nsContext),
+        __proto__: proto
+      };
+    }
 
     this.index = endIndex;    
-    if (nsContext !== undefined) {
-      result.value.X = nsContext;
-    }    
 
     return result;
   }
