@@ -35,16 +35,33 @@ export function createDOMCharacterDataPrototype(domNodePrototype){
 
   // https://dom.spec.whatwg.org/#dom-node-lookupprefix
   domNodePrototype.lookupPrefix = function(namespaceUri){
+    if (this.X) {
+      if (namespaceUri === null || namespaceUri === '') {
+        return null;
+      }
+      var x = this.x;
+      for (var pfx in x){
+        if (x[pfx] === namespaceUri) {
+          return pfx === '' ? null : pfx;
+        }
+      }
+    }
     return this.p.lookupPrefix(namespaceUri);
   };
     
   // https://dom.spec.whatwg.org/#dom-node-lookupnamespaceuri
   domNodePrototype.lookupNamespaceURI = function(pfx){
+    if (this.X) {
+      return this.X[pfx || ''];
+    }
     return this.p.lookupNamespaceURI(pfx);
   };
 
   // https://dom.spec.whatwg.org/#dom-node-isdefaultnamespace
   domNodePrototype.isDefaultNamespace = function(namespaceUri){
+    if (this.X) {
+      return this.X[''] === namespaceUri;
+    }
     return this.p.isDefaultNamespace(namespaceUri);
   };
 
