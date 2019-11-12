@@ -121,6 +121,22 @@ describe('Namespace tests', () => {
       expect(elementNode.attributes.item(0).lookupPrefix('http://top.ns.com/')).toBe('pr');    
     });    
 
+    it('lookup namespaceURI for null on att1 is null', () => {    
+      expect(elementNode.attributes.item(0).lookupNamespaceURI(null)).toBe(null);    
+    });    
+
+    it('lookup namespaceURI for pr on att1 is http://top.ns.com/', () => {    
+      expect(elementNode.attributes.item(0).lookupNamespaceURI('pr')).toBe('http://top.ns.com/');    
+    });    
+
+    it('isDefaultNamespace http://top.ns.com/ on att1 is false', () => {    
+      expect(elementNode.attributes.item(0).isDefaultNamespace('http://top.ns.com/')).toBe(false);    
+    });    
+
+    it('isDefaultNamespace null on att1 is true', () => {    
+      expect(elementNode.attributes.item(0).isDefaultNamespace(null)).toBe(true);    
+    });    
+
     it('pr:att2 is in the "http://top.ns.com/" namespace', () => {    
       expect(elementNode.attributes.item(1).namespaceURI).toBe("http://top.ns.com/");    
     });
@@ -131,6 +147,22 @@ describe('Namespace tests', () => {
     
     it('lookup prefix for http://top.ns.com/ on pr:att2 is pr', () => {    
       expect(elementNode.attributes.item(1).lookupPrefix('http://top.ns.com/')).toBe('pr');    
+    });    
+
+    it('lookup namespaceURI for null on att2 is null', () => {    
+      expect(elementNode.attributes.item(1).lookupNamespaceURI(null)).toBe(null);    
+    });    
+
+    it('lookup namespaceURI for pr on att2 is http://top.ns.com/', () => {    
+      expect(elementNode.attributes.item(1).lookupNamespaceURI('pr')).toBe('http://top.ns.com/');    
+    });    
+
+    it('isDefaultNamespace http://top.ns.com/ on att2 is false', () => {    
+      expect(elementNode.attributes.item(1).isDefaultNamespace('http://top.ns.com/')).toBe(false);    
+    });    
+
+    it('isDefaultNamespace null on att2 is true', () => {    
+      expect(elementNode.attributes.item(1).isDefaultNamespace(null)).toBe(true);    
     });    
   });
 
@@ -266,8 +298,23 @@ describe('Namespace tests', () => {
       expect(textNode.lookupPrefix(null)).toBe(null);    
     });    
     
-    it('lookup prefix for http://top.ns.com/ on att1 is pr', () => {    
-      expect(textNode.lookupPrefix('http://top.ns.com/')).toBe('pr');    
+    it('lookup prefix for http://top.ns.com/ on text node is pr', () => {    
+      expect(textNode.lookupPrefix('http://prefixed.ns.com/')).toBe('pr');    
+    });    
+
+    it('lookup namespaceURI for null on text node is http://default.ns.com/', () => {    
+      expect(textNode.lookupNamespaceURI(null)).toBe('http://default.ns.com/');
+    });    
+
+    it('lookup namespaceURI for pr on text node is http://prefixed.ns.com/', () => {    
+      expect(textNode.lookupNamespaceURI('pr')).toBe('http://prefixed.ns.com/');
+    });    
+
+    it('isDefaultNamespace http://default.ns.com/ on text node is true', () => {    
+      expect(textNode.isDefaultNamespace('http://default.ns.com/')).toBe(true);
+    });    
+    it('isDefaultNamespace http://default.ns.com/ on text node is true', () => {    
+      expect(textNode.isDefaultNamespace('http://prefixed.ns.com/')).toBe(false);
     });    
   });
   

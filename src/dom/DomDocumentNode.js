@@ -84,6 +84,27 @@ export function createDOMDocumentPrototype(domNodePrototype){
     }      
     return e.lookupPrefix(namespaceUri);
   };
+
+  // https://dom.spec.whatwg.org/#dom-node-lookupnamespaceuri
+  domNodePrototype.lookupNamespaceURI = function(pfx){
+    var e = this.documentElement;
+    if (e === null) {
+      return null;
+    }      
+    return e.lookupNamespaceURI(pfx);
+  };
+
+  // https://dom.spec.whatwg.org/#dom-node-isdefaultnamespace
+  domNodePrototype.isDefaultNamespace = function(namespaceUri){
+    if (namespaceUri === '') {
+      namespaceUri = null;
+    }
+    var e = this.documentElement;
+    if (e === null) {
+      return namespaceUri === null;
+    }      
+    return this.p.isDefaultNamespace(namespaceUri);
+  };
   
   return domNodePrototype;
 }

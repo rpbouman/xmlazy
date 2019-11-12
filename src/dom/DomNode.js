@@ -326,16 +326,6 @@ export function createDOMNodePrototype(o) {
     value: null,
     configurable: true
   });
-
-  // https://dom.spec.whatwg.org/#dom-node-lookupnamespaceuri
-  o.lookupNamespaceURI = function(pfx){
-    return this.x[pfx || ''] || null;
-  };
-
-  // https://dom.spec.whatwg.org/#dom-node-isdefaultnamespace
-  o.isDefaultNamespace = function(namespaceUri){
-    return this.x[''] === namespaceUri;
-  };
   
   return o;
 }
