@@ -275,5 +275,15 @@ export function createDOMElementPrototype(domNodePrototype){
     return null;
   };
 
+  // https://dom.spec.whatwg.org/#dom-node-lookupnamespaceuri
+  domNodePrototype.lookupNamespaceURI = function(pfx){
+    return this.x[pfx || ''] || null;
+  };
+
+  // https://dom.spec.whatwg.org/#dom-node-isdefaultnamespace
+  domNodePrototype.isDefaultNamespace = function(namespaceUri){
+    return this.x[''] === namespaceUri;
+  };
+
   return domNodePrototype;
 }

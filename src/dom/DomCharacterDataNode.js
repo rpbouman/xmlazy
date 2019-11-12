@@ -38,5 +38,15 @@ export function createDOMCharacterDataPrototype(domNodePrototype){
     return this.p.lookupPrefix(namespaceUri);
   };
     
+  // https://dom.spec.whatwg.org/#dom-node-lookupnamespaceuri
+  domNodePrototype.lookupNamespaceURI = function(pfx){
+    return this.p.lookupNamespaceURI(pfx);
+  };
+
+  // https://dom.spec.whatwg.org/#dom-node-isdefaultnamespace
+  domNodePrototype.isDefaultNamespace = function(namespaceUri){
+    return this.p.isDefaultNamespace(namespaceUri);
+  };
+
   return domNodePrototype;
 }
