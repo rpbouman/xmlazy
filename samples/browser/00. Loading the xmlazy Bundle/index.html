@@ -15,20 +15,20 @@
   <body>
     <h1>🦥 00. Loading the xmlazy Bundle</h1>
     <a href="../index.html">Back</a>
+    <p>
+      You can include xmlazy into your webpage by importing it as a ES6 module.      
+    </p>
     <pre id="code">
-      import * as xmlazy from '/dist/xmlazy.bundle.js';
+    &lt;script type="module"&gt;
+      import * as xmlazy from '/dist/xmlazy.bundle.min.js';
       
-      try {
-        const xml = '<hello-world/>';
-        const saxStringReader = new xmlazy.SaxStringReader(xml);
-      } catch(e){
-        document.getElementById("error").innerText = e.message;
-      }
+      // do something with xmlazy.
+    &lt;/script&gt;      
     </pre>
     <pre id="error"></pre>
     <script>
       try {
-        var code = document.getElementById("code").innerText;
+        var code = document.getElementById("code").innerText.slice('&lt;script type="module"&gt;'.length, -'&lt;/script&gt;'.length);
         var script = document.createElement("script");
         script.type = "module";
         script.innerText = code;

@@ -89,7 +89,7 @@
       import * as xmlazy from '/dist/xmlazy.bundle.js';
 
       let doc;
-      let numSaxEvents;
+      let numStaxEvents;
       const handleFile = (event) => {
         const fileInput = event.target;
         const files = fileInput.files;
@@ -112,12 +112,12 @@
                   
       const parseXml = (xml) => { 
         xml = xml || document.getElementById('textarea').value;
-        const saxOutput = document.getElementById("saxOutput");
-        const saxReader = new xmlazy.SaxStringReader(xml);
-        let saxReaderResult;
-        numSaxEvents = 0;
+        const staxOutput = document.getElementById("staxOutput");
+        const staxReader = new xmlazy.StaxStringReader(xml);
+        let staxReaderResult;
+        numStaxEvents = 0;
         try {
-          doc = saxReader.buildDocument();
+          doc = staxReader.buildDocument();
         }
         catch (e) {
           document.getElementById('error').innerText = e.message;
