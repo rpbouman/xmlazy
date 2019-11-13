@@ -35,7 +35,7 @@
         <th>Time</th><td id="time"></td>
       </tr>
       <tr>
-        <th>Sax Events:</th><td id="saxEvents"></td>
+        <th>Stax Events:</th><td id="staxEvents"></td>
       </tr>
       <tr>
         <th>Speed:</th><td id="speed"></td>
@@ -45,11 +45,11 @@
     <script type="module">
       import * as xmlazy from '/dist/xmlazy.bundle.js';
 
-      let numSaxEvents;
+      let numStaxEvents;
       const handleFile = (event) => {
         document.getElementById("fileSize").innerText = "";
         document.getElementById("time").innerText = "";
-        document.getElementById("saxEvents").innerText = "";
+        document.getElementById("staxEvents").innerText = "";
         document.getElementById("speed").innerText = "";
         document.getElementById("error").innerText = "";
         
@@ -69,10 +69,10 @@
           parseXml(xml);
           const expired = Date.now() - start;
           document.getElementById("time").innerText = expired;
-          document.getElementById("saxEvents").innerText = numSaxEvents;
+          document.getElementById("staxEvents").innerText = numStaxEvents;
           document.getElementById("speed").innerText =  
             Math.round(file.size / expired / 1024) + " Kb/ms; " + 
-            Math.round(numSaxEvents / expired ) + " SaxEvents/ms; "
+            Math.round(numStaxEvents / expired ) + " StaxEvents/ms; "
           ;
         }
         const start = Date.now();
@@ -80,13 +80,13 @@
       }
                   
       const parseXml = (xml) => { 
-        const saxOutput = document.getElementById("saxOutput");
-        const saxReader = new xmlazy.SaxStringReader(xml);
-        let saxReaderResult;
-        numSaxEvents = 0;
+        const staxOutput = document.getElementById("staxOutput");
+        const staxReader = new xmlazy.StaxStringReader(xml);
+        let staxReaderResult;
+        numStaxEvents = 0;
         try {
-          while (!(saxReaderResult = saxReader.next()).done) {
-            numSaxEvents += 1;
+          while (!(staxReaderResult = staxReader.next()).done) {
+            numStaxEvents += 1;
           }
         }
         catch (e) {
