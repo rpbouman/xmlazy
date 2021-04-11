@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+  <head>
+    <title>xmlazy Samples: 01. Basic Sax Parsing</title>
+    <script type="text/javascript" src="../3rdparty/emoji-favicon-toolkit.min.js"></script>
+    <script type="text/javascript">
+      set_emoji_favicon(emoji="🦥", cacheWithServiceWorker = false);
+    </script>
+    <style type="text/css">
+    
+      #saxOutput {
+        font-family: monospace
+      }  
+      
+      #saxOutput td, #saxOutput th {
+        text-align: right;
+      }
+      
+      #saxOutput td.error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🦥 01. Basic Sax Parsing</h1>
+    <a href="../index.html">Back</a>
+    <textarea 
+      id="xmlInput"
+      style="width:100%" 
+      height="30%"
+      rows="10"
+    >&lt;?xml version="1.0"?&gt;
+&lt;hello&gt;
+  World!
+&lt;/hello&gt;
+</textarea>
+    <div>
+      <Button id="btnParse">Parse</Button>
+    </div>
+    <table
+      id="saxOutput"
+      border="1"
+    >
+      <thead>
+        <th >b</th>
+        <th >e</th>
+        <th >nodeType</th>
+        <th >sourceXml</th>
+      </thead>
+      <tbody>
+        
+      </tbody>
+    </table>
+    <script type="module">
+      import * as xmlazy from '/dist/xmlazy.bundle.js';
+      
+      document.getElementById("btnParse").onclick = () => {
+        doParse();
+      }
+      
+      const doParse = () => {
+        const body = document.getElementById("saxOutput").tBodies[0];
+        while (body.rows.length) {
+          body.deleteRow(0);
+        }        
+        
+        const xml = document.getElementById("xmlInput").value;
+        parseXml(xml);
+      };
+      
+      const parseXml = (xml) => { 
+        const saxOutput = document.getElementById("saxOutput");
+        const saxOutputTBody = saxOutput.tBodies[0];
+        const saxOutputTBodyRows = saxOutputTBody.rows;
+        const saxReader = new xmlazy.SaxStringReader(xml);
+        let saxReaderResult;
+        
+        try {
+          while (!(saxReaderResult = saxReader.next()).done) {
+            const saxNode = saxReaderResult.value;
+            const row = saxOutputTBody.insertRow(saxOutputTBodyRows.length);
+            const cells = row.cells;
+            row.insertCell(cells.length).innerText = saxNode.b;
+            row.insertCell(cells.length).innerText = saxNode.e;
+            row.insertCell(cells.length).innerText = saxNode.nodeType;
+            row.insertCell(cells.length).innerText = saxNode.sourceXml;
+            if (saxNode.nodeType === 1) {
+              var attributeIterator = saxNode.getAttributeIterator();
+              var iteratorResult;
+              while (!(iteratorResult = attributeIterator.next()).done) {
+                const saxAttributeNode = iteratorResult.value;
+                const row = saxOutputTBody.insertRow(saxOutputTBodyRows.length);
+                const cells = row.cells;
+                row.insertCell(cells.length).innerText = saxAttributeNode.b;
+                row.insertCell(cells.length).innerText = saxAttributeNode.e;
+                row.insertCell(cells.length).innerText = saxAttributeNode.nodeType;
+                row.insertCell(cells.length).innerText = saxAttributeNode.sourceXml;
+              }
+            }
+          }
+        }
+        catch (e) {
+          const row = saxOutputTBody.insertRow(saxOutputTBodyRows.length);
+          const cell = row.insertCell(0);
+          cell.innerText = e.message;
+          cell.colSpan = saxOutput.rows[0].cells.length;
+          cell.className = "error";
+        }
+      }
+    </script>    
+  </body>
+</html>
