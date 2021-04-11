@@ -1,5 +1,7 @@
 import { StaxStringReader } from './stax/StaxStringReader.js';
+import { SaxStreamReader } from './stream/SaxStreamReader.js';
 
 export default {
-  StaxStringReader: StaxStringReader
+  StaxStringReader: StaxStringReader,
+  SaxStreamReader: SaxStreamReader
 };

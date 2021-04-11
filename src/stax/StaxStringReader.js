@@ -32,7 +32,7 @@ var StaxStringReader = function(string, options){
           options = string;
           string = s;
           break _string;
-        case undefined:
+        case 'undefined':
           options = string;
           string = options.string || undefined;
           break _string;
@@ -67,19 +67,12 @@ var StaxStringReader = function(string, options){
     if (typeof(this.options.saxHandler) !== 'function'){
       this.throwError('config option saxHandler must be a function.');
     }
-    this.saxHandler = this.options.saxHandler;
+    this.setSaxHandler(this.options.saxHandler);
   }
-  this.result = {
-    done: false,
-    value: undefined
-  };
   this.endElementDetector = /[^\s>"']+(\s*[^\s<>'"]+\s*=\s*('[^<']*'|"[^<"]*"))?\s*\/?>/g;
   this.documentTypePattern = /^<!DOCTYPE\s+[^\s[>]+(\s+(SYSTEM|PUBLIC\s+("[^"]*"|'[^']*'))\s+("[^"]*"|'[^']*'))?\s*(\[(<!ELEMENT\s+[^\s>]+(\s+[^\s>]+)*\s*>|<!ATTLIST\s+[^\s>]+(\s+[^\s>]+\s+(CDATA|ID(REFS?)?|ENTIT(Y|IES)|NMTOKENS?|NOTATION\s+\(\s*[^\s|)]+(\s*\|\s*[^)|>(\s]+)*\s*\)|\(\s*[^()|\s>]+(\s*\|\s*[^()|\s>]+)*\s*\))\s+(#REQUIRED|#IMPLIED|((#FIXED\s+)?("[^"]+"|'[^']+'))))*\s*>|<!ENTITY\s+([^\s]+\s+(("[^"]*"|'[^']*')|(SYSTEM|PUBLIC\s+("[^"]*"|'[^']*')(\s+NDATA\s+[^s]+)?)\s+("[^"]*"|'[^']*'))|%\s+[^s]+\s(("[^"]*"|'[^']*')|(SYSTEM|PUBLIC\s+("[^"]*"|'[^']*'))\s+("[^"]*"|'[^']*')))\s*>|<!NOTATION\s+[^\s]+\s+()\s*>|<\?[^?]+\?>|<!--([^-]|-[^-])*-->|%[^;]+;|\s+)*]*\]\s*)?>/;
 
-  this.reset();
-  if (string !== undefined) {
-    this.setString(string);
-  }
+  this.reset(string);
 };
 
 StaxStringReader.prototype = {
@@ -114,6 +107,10 @@ StaxStringReader.prototype = {
     this.nsContext = {'': null};
     this.isReset = true;
     this.docNode = null;
+    this.result = {
+      done: false,
+      value: undefined
+    };
     if (string !== undefined){
       this.setString(string);
     }
@@ -121,15 +118,66 @@ StaxStringReader.prototype = {
   setString: function(string){
     this.string = string;
     this.index = 0;
+    this.result.done = false;
+    this.result.value = undefined;
     this.initNodePrototypes();
+  },
+  setSaxHandler: function(saxHandler) {
+    this.saxHandler = saxHandler;
   },
   getDocumentNode: function(){
     return this.docNode;
   },
   getCurrentNamespaceContext: function(){
     return this.nsContext;
-  },
-  parseAndCallback: function(handler){
+  },  
+  parseAndCallback: function(string, handler){
+    _string: switch (typeof string) {
+      case 'string':
+        this.setString(string);
+        switch (typeof handler) {
+          case 'function':
+            break _string;
+          case 'undefined':
+            handler = this.saxHandler;
+            break _string;
+          default:
+            this.throwError(`Handler argument must be of type function, not ${typeof handler}`);
+            break _string;
+        }
+      case 'function':       
+        switch (typeof handler) {
+          case 'string':
+            var s = handler;
+            handler = string;
+            string = s;
+            break _string;
+          case 'undefined':
+            handler = string;
+            string = this.string || undefined;
+            break _string;
+          default:
+            this.throwError(`Invalid type: ${typeof options}`);
+            break _string;
+        }
+      case 'undefined':
+        switch (typeof handler) {
+          case 'function':
+            string = this.string;
+            break _string;
+          case 'string':
+            this.setString(handler);
+            handler = this.saxHandler;
+            break _string;
+          case 'undefined':
+            string = this.string;
+            handler = this.saxHandler;
+            break _string;
+          default:
+            this.throwError(`Invalid type: ${typeof options}`);
+        }
+    }
+    
     switch (typeof(handler)) {
       case 'undefined':
         if (this.saxHandler === undefined) {
@@ -140,7 +188,7 @@ StaxStringReader.prototype = {
       case 'function':
         break;
       default:
-        this.throwError('Handler must be a function');
+        this.throwError('handler must be a function');
     }
     var result;
     if (this.isReset === true) {
@@ -230,6 +278,7 @@ StaxStringReader.prototype = {
       if (index >= n){
         result.done = true;
         result.value = undefined;
+        this.index = this.string.length;
         return result;
       }
       

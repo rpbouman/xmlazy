@@ -35,8 +35,14 @@ export default [
     input: 'src/main.js',
     external: [],
     output: [
-      { file: pkg.main, format: 'cjs' },
-      { file: pkg.module, format: 'es' }
+      { 
+        file: pkg.main, 
+        format: 'cjs' 
+      },
+      { 
+        file: pkg.module, 
+        format: 'es' 
+      }
     ]
   },
   {
