@@ -216,7 +216,21 @@ export function createDOMElementPrototype(domNodePrototype){
       map[attribute.name] = attribute;
     }
     return map;
-  };  
+  };
+  
+  // https://dom.spec.whatwg.org/#dom-element-getattributenames
+  // must return the qualified names of the attributes in this’s attribute list, in order, and a new list otherwise.
+  // An attribute’s qualified name is its local name if its namespace prefix is null, and its namespace prefix, followed by ":", followed by its local name, otherwise.
+  domNodePrototype.getAttributeNames = function(){
+    var attributeNames = [];
+    var attributeResult, attributeNode, attributeIterator = this.getAttributeIterator();
+    // eslint-disable-next-line no-cond-assign
+    while (!(attributeResult = attributeIterator.next()).done) {
+      attributeNode = attributeResult.value;
+      attributeNames.push(attributeNode.nodeName);
+    }
+    return attributeNames;
+  };
   
   // https://dom.spec.whatwg.org/#dom-element-getattributenode
   domNodePrototype.getAttributeNode = function(name){
