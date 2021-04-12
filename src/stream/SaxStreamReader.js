@@ -39,7 +39,7 @@ SaxStreamReader.prototype = {
   STATE_PAUSED: 2,
   STATE_NON_FATAL_ERROR: 3, 
   STATE_FATAL_ERROR: 4,
-  STATE_DONE: 5,  
+  STATE_DONE: 5,  /*
   parseAndCallback: function(){
     var reader = this.reader;
     var textDecoder = this.textDecoder;
@@ -109,7 +109,7 @@ SaxStreamReader.prototype = {
           });
       }
     }.bind(this));
-  },
+  },*/
   parseAndCallback: function(options) {
     var reader = options.reader || this.options.reader;
     var textDecoder = options.textDecoder || this.options.textDecoder;
