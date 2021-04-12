@@ -9,15 +9,16 @@ attributeIteratorPrototype.reset = function(){
 
 attributeIteratorPrototype.next = function(){
   var elementNode = this.E;
-  var re;
+  var re, s;
   if (this.p) {
-    re = this.p; 
+    re = this.p;
+    s = this.s
   }
   else {
     re = this.p = new RegExp(attributeRegexp.source, 'g');
     re.lastIndex = elementNode.b + 1 + elementNode.nodeName.length;
+    s = this.s = elementNode.s.slice(0, elementNode.e);
   }
-  var s = elementNode.s;
   var r = this.r || (this.r = {done: false});
   var match = re.exec(s);
   if (match === null) {

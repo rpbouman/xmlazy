@@ -40,8 +40,8 @@ export function createDOMDocumentPrototype(domNodePrototype){
     return Boolean(this.n);
   };
   
-  // https://dom.spec.whatwg.org/#dom-document-documentelement
-  Object.defineProperty(domNodePrototype, 'docType', {
+  // https://dom.spec.whatwg.org/#dom-document-doctype
+  Object.defineProperty(domNodePrototype, 'doctype', {
     enumerable: true,
     get: function(){
       var n = this;
@@ -105,6 +105,25 @@ export function createDOMDocumentPrototype(domNodePrototype){
     }      
     return this.p.isDefaultNamespace(namespaceUri);
   };
+  
+  // https://dom.spec.whatwg.org/#dom-nonelementparentnode-getelementbyid
+  domNodePrototype.getElementById = function(id){
+    var n = this;
+    while (n = n.n) {
+      if (n.nodeType !== this.ELEMENT_NODE){
+        continue;
+      }
+      var attribute, attributeIteratorResult, attributeIterator = n.getAttributeIterator();
+      // eslint-disable-next-line no-cond-assign
+      while (!(attributeIteratorResult = attributeIterator.next()).done) {
+        attribute = attributeIteratorResult.value;
+        if (attribute.name === 'id' && attribute.value === id){
+          return n;
+        }
+      }
+    };
+    return null;
+  }
   
   return domNodePrototype;
 }

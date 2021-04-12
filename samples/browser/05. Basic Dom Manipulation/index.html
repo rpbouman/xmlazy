@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+  <head>
+    <title>xmlazy Samples: 01. Basic Stax Parsing</title>
+    <script type="text/javascript" src="../3rdparty/emoji-favicon-toolkit.min.js"></script>
+    <script type="text/javascript">
+      set_emoji_favicon(emoji="🦥", cacheWithServiceWorker = false);
+    </script>
+    <style type="text/css">
+    
+      #staxOutput {
+        font-family: monospace
+      }  
+      
+      #staxOutput td, #staxOutput th {
+        text-align: right;
+      }
+      
+      #staxOutput td.error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🦥 05. Basic Dom Manipulation</h1>
+    <a href="../index.html">Back</a>
+    <p>
+      <a href="https://en.wikipedia.org/wiki/Document_Object_Model">DOM</a> stands for "Document Object Model".
+    </p>
+    <pre id="code">
+    &lt;script type="module"&gt;
+      import * as xmlazy from '/dist/xmlazy.bundle.min.js';
+      
+      try {
+      
+        const xml = '&lt;a id="1"&gt;&lt;z xmlns:z="http://www.zzz.com/"&gt;&lt;zz z:id="zId" id="xxx"/&gt;&lt;/z&gt;&lt;b id="2"/&gt;&lt;c id="1"&gt;&lt;d id="2"&gt;text&lt;/d&gt;&lt;/c&gt;&lt;/a&gt;';
+        const staxStringReader = new xmlazy.StaxStringReader(xml);
+        const doc = staxStringReader.buildDocument();
+        const nodeWithIdxxx = doc.getElementById('xxx');
+        
+      } catch(e){
+        document.getElementById("error").innerText = e.message;
+      }
+    &lt;/script&gt;      
+    </pre>
+    <p>
+      This page uses and instance of the <code>StaxStringReader</code> class to build the DOM document of the XML entered into the text area. 
+      You can enter the id of a node and the node will be fetched using the DOM document's getElementById() method.
+      If found, the node is displayed in the table. If not found, null is returned.
+    </p>
+    <textarea 
+      id="xmlInput"
+      style="width:100%" 
+      height="30%"
+      rows="10"
+    >&lt;?xml version="1.0"?&gt;
+&lt;a id="1"&gt;
+  &lt;zz z:id="zId" id="xxx"/&gt;
+  &lt;b id="2"/&gt;
+  &lt;c id="1"&gt;
+    &lt;d id="2"&gt;text&lt;/d&gt;
+  &lt;/c&gt;
+&lt;/a&gt;
+</textarea>
+    <div>
+      Find node by Id: <input id="nodeId"/>
+    </div>
+    <div>
+      <Button id="btnParse">Parse</Button>
+    </div>
+    <table
+      id="staxOutput"
+      border="1"
+    >
+      <thead>
+        <th >b</th>
+        <th >e</th>
+        <th >nodeType</th>
+        <th >sourceXml</th>
+      </thead>
+      <tbody>
+        
+      </tbody>
+    </table>
+    <script type="module">
+      import * as xmlazy from '/dist/xmlazy.bundle.js';
+      
+      document.getElementById("btnParse").onclick = () => {
+        doParse();
+      }
+      
+      const doParse = () => {
+        const body = document.getElementById("staxOutput").tBodies[0];
+        while (body.rows.length) {
+          body.deleteRow(0);
+        }        
+        
+        const xml = document.getElementById("xmlInput").value;
+        parseXml(xml);
+      };
+      
+      const parseXml = (xml) => { 
+        const staxOutput = document.getElementById("staxOutput");
+        const staxOutputTBody = staxOutput.tBodies[0];
+        const staxOutputTBodyRows = staxOutputTBody.rows;
+      
+        const staxReader = new xmlazy.StaxStringReader(xml);
+        let doc = staxReader.buildDocument();
+        try {
+          const id = document.getElementById('nodeId').value;
+          const staxNode = doc.getElementById(id);
+
+          const row = staxOutputTBody.insertRow(staxOutputTBodyRows.length);
+          const cells = row.cells;
+          if (staxNode === null) {
+            row.insertCell(cells.length).innerText = 'null';
+            return;
+          }
+          row.insertCell(cells.length).innerText = staxNode.b;
+          row.insertCell(cells.length).innerText = staxNode.e;
+          row.insertCell(cells.length).innerText = staxNode.nodeType;
+          row.insertCell(cells.length).innerText = staxNode.sourceXml;
+          if (staxNode.nodeType === 1) {
+            var attributeIterator = staxNode.getAttributeIterator();
+            var iteratorResult;
+            while (!(iteratorResult = attributeIterator.next()).done) {
+              const staxAttributeNode = iteratorResult.value;
+              const row = staxOutputTBody.insertRow(staxOutputTBodyRows.length);
+              const cells = row.cells;
+              row.insertCell(cells.length).innerText = staxAttributeNode.b;
+              row.insertCell(cells.length).innerText = staxAttributeNode.e;
+              row.insertCell(cells.length).innerText = staxAttributeNode.nodeType;
+              row.insertCell(cells.length).innerText = staxAttributeNode.sourceXml;
+            }
+          }
+          
+        }
+        catch (e) {
+          const row = staxOutputTBody.insertRow(staxOutputTBodyRows.length);
+          const cell = row.insertCell(0);
+          cell.innerText = e.message;
+          cell.colSpan = staxOutput.rows[0].cells.length;
+          cell.className = "error";
+        }
+      }
+    </script>    
+  </body>
+</html>
