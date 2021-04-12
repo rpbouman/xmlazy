@@ -88,6 +88,14 @@ describe('Attributes', () => {
       }
     });
     
+    it(`implements getAttributeNames()`, ()=>{
+      var attributeNames = elementNode.getAttributeNames();
+      var testNames = attributeTestset.map((data) => {
+        return (data.prefix ? data.prefix + ':' : '') + data.localName;
+      });
+      expect(attributeNames).toEqual(testNames);
+    });
+    
     it(`Can get attributes`, () => {
       expect(elementNode.attributes).toBeDefined();
     });
