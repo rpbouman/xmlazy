@@ -13,7 +13,7 @@ describe('Document Type Node', () => {
     beforeAll(() => {
       staxStringReader = new xmlazy.StaxStringReader(xml);
       documentNode = staxStringReader.buildDocument();
-      docTypeNode = documentNode.docType;
+      docTypeNode = documentNode.doctype;
     });
 
     describe('Basic doc type node tests', () =>{
