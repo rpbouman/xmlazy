@@ -1,3 +1,18 @@
+const ELEMENT_END = -1;
+
+const ELEMENT_NODE = 1;
+const ATTRIBUTE_NODE = 2;
+const TEXT_NODE = 3;
+const CDATA_SECTION_NODE = 4;
+const ENTITY_REFERENCE_NODE = 5;
+const ENTITY_NODE = 6;
+const PROCESSING_INSTRUCTION_NODE = 7;
+const COMMENT_NODE = 8;
+const DOCUMENT_NODE = 9;
+const DOCUMENT_TYPE_NODE = 10;
+const DOCUMENT_FRAGMENT_NODE = 11;
+const NOTATION_NODE = 12;
+
 /**
 *
 * NodeList
@@ -19,8 +34,8 @@ childNodeIterator.next = function(){
   var hasChildNodes = p.hasChildNodes();
   var r = this.r || (this.r = {done: !hasChildNodes});
   switch (p.nodeType){
-    case 1:
-    case 9:
+    case ELEMENT_NODE:
+    case DOCUMENT_NODE:
       if (hasChildNodes) {
         break;
       }
@@ -30,11 +45,12 @@ childNodeIterator.next = function(){
   }
   if (r.value) {
     var n = r.value;
-    if (n.nodeType === 1) {
+    if (n.nodeType === ELEMENT_NODE) {
       if (n.isSelfClosing) {
         n = n.n;
-        if (n.nodeType === -1){
-          delete r.value;
+        
+        if (n.nodeType === ELEMENT_END){
+          this.l = 0;
           r.done = true;
         }
         else {
@@ -46,10 +62,10 @@ childNodeIterator.next = function(){
       // eslint-disable-next-line no-cond-assign
       while ((n = n.n) && level > 0) {
         switch (n.nodeType){
-          case -1: 
+          case ELEMENT_END: 
             level -= 1;
             break;
-          case 1:
+          case ELEMENT_NODE:
             if (!n.isSelfClosing){
               level += 1;
               break;
@@ -59,18 +75,16 @@ childNodeIterator.next = function(){
         }        
       }
       if (level === 0 && n){
-        r.value = n;        
+        r.value = n;
       }
       else {
-        delete r.value;
         r.done = true;
       }
     }
     else {
       n = n.n;
       if (n){
-        if (n.nodeType === -1){
-          delete r.value;
+        if (n.nodeType === ELEMENT_END){
           r.done = true;
         }
         else {
@@ -78,7 +92,6 @@ childNodeIterator.next = function(){
         }
       }
       else {
-        delete r.value;
         r.done = true;
       }
     }
@@ -100,14 +113,16 @@ childNodeList.item = function(index){
   if (index < 0) {
     throw new RangeError('Index must not be less than zero.');
   }
-  this.reset();
-  var i = 0, result;
+  if (this.i > index){
+    this.reset();
+  }
+  var result;
   // eslint-disable-next-line no-cond-assign
   while (!(result = this.next()).done){
-    if (i === index) {
+    this.i += 1;
+    if (this.i === index) {
       return result.value;
     }
-    i += 1;    
   }
   throw new RangeError('Index exceeds length.');
 };
@@ -115,12 +130,15 @@ childNodeList.item = function(index){
 Object.defineProperty(childNodeList, 'length', {
   enumerable: true,
   get: function(){
-    var length = 0;
-    this.reset();
-    while (!(this.next()).done) {
-      length += 1;
+    if (this.l === undefined) {
+      var r, l = 0;
+      while (!(r = this.next()).done){
+        l += 1;
+      }
+      this.reset();
+      this.l = l;
     }
-    return length;
+    return this.l;
   }
 });
 
@@ -251,14 +269,14 @@ export function createDOMNodePrototype(o) {
       // eslint-disable-next-line no-cond-assign
       prev: while(p = p.p) {
         switch (p.nodeType) {
-          case 1:
+          case ELEMENT_NODE:
             if (p.hasChildNodes()) {
               break prev;
             }
             else {
               continue;
             }
-          case 9:
+          case DOCUMENT_NODE:
             break prev;
         }
       }
@@ -269,7 +287,8 @@ export function createDOMNodePrototype(o) {
   o.getChildNodeIterator = function(){
     return {
       __proto__: childNodeIterator,
-      p: this
+      p: this,
+      i: 0
     };
   };
   
@@ -278,6 +297,7 @@ export function createDOMNodePrototype(o) {
     get: function(){
       return {
         p: this,
+        i: -1,
         __proto__: childNodeList
       };
     }
