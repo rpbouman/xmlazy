@@ -460,26 +460,18 @@ StaxStringReader.prototype = {
           }
       }
     }
-    
+    var value = {
+      b: index,
+      E: endIndex,
+      X: (nsContext || this.nsContext),
+      __proto__: proto
+    };
+      
     if (this.chainNodes) {
-      result.value = (result.value.n = {
-        b: index,
-        E: endIndex,
-        p: result.value,
-        __proto__: proto
-      });
-      if (nsContext !== undefined) {
-        result.value.X = nsContext;
-      }
+      value.p = result.value;
+      result.value.n = value;
     }
-    else {
-      result.value = {
-        b: index,
-        E: endIndex,
-        X: (nsContext || this.nsContext),
-        __proto__: proto
-      };
-    }
+    result.value = value;
 
     this.index = endIndex;    
 
