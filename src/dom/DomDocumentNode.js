@@ -156,6 +156,42 @@ export function createDOMDocumentPrototype(domNodePrototype){
       return null;
     }
   });
+
+  Object.defineProperty(domNodePrototype, 'getElementsByTagName', {
+    enumerable: true,
+    writable: false,
+    value: function(nodeName){
+      const wildcard = '*';
+      var documentElement = this.documentElement;
+      var nodes = documentElement.getElementsByTagName(nodeName);
+      
+      if (documentElement.nodeName === nodeName){
+        nodes.a.unshift(documentElement);
+      }
+      return nodes;
+    }
+  });
+  
+  Object.defineProperty(domNodePrototype, 'getElementsByTagNameNS', {
+    enumerable: true,
+    writable: false,
+    value: function(namespaceURI, localName){
+      const wildcard = '*';
+      if (namespaceURI === '') {
+        namespaceURI = null;
+      }
+      var documentElement = this.documentElement;
+      var nodes = documentElement.getElementsByTagNameNS(namespaceURI, localName);
+      
+      if (
+        ( namespaceURI === wildcard ? true : documentElement.namespaceURI === namespaceURI) &&
+        ( localName    === wildcard ? true : documentElement.localName    === localName)
+      ){
+        nodes.a.unshift(documentElement);
+      }
+      return nodes;
+    }
+  });
   
   return domNodePrototype;
 }
