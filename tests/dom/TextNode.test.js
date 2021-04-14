@@ -60,4 +60,37 @@ describe('Text', () => {
     expect(textNode.lastChild).toBe(null);
   });
 
+  it(`lookupPrefix must be null`, () => {
+    expect(textNode.lookupPrefix('')).toBe(null);
+  });
+
+  it(`data equals ${text}`, () => {
+    expect(textNode.data).toBe(text);
+  });
+
+  describe('Text in namespace', () => {
+    
+    const text = 'world';
+    const ns = 'urn.tmp:text';
+    const pfx = 'txt';
+    let 
+      staxStringReader, staxResult, 
+      xml, elementNode, textNode
+    ;    
+    beforeAll(() => {
+      
+      xml = `<hello xmlns:${pfx}="${ns}">${text}</hello>`;
+      staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
+      staxResult = staxStringReader.next();
+      textNode = staxResult.value;
+    });
+  
+    it(`lookupPrefix must be null`, () => {
+      expect(textNode.lookupPrefix(ns)).toBe(pfx);
+    });
+
+  });
+
 });

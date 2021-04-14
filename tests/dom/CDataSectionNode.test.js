@@ -61,4 +61,8 @@ describe('CData Section', () => {
     expect(cdataSectionNode.lastChild).toBe(null);
   });
 
+  it(`data must be ${text}`, () => {
+    expect(cdataSectionNode.data).toBe(text);
+  });
+
 });
