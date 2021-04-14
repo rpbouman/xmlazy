@@ -153,62 +153,62 @@ Object.defineProperty(childNodeList, 'length', {
 export function createDOMNodePrototype(o) {
   Object.defineProperty(o, 'ELEMENT_NODE', {
     enumerable: true,
-    value: 1
+    value: ELEMENT_NODE
   });
   
   Object.defineProperty(o, 'ATTRIBUTE_NODE', {
     enumerable: true,
-    value: 2
+    value: ATTRIBUTE_NODE
   });
   
   Object.defineProperty(o, 'TEXT_NODE', {
     enumerable: true,
-    value: 3
+    value: TEXT_NODE
   });
   
   Object.defineProperty(o, 'CDATA_SECTION_NODE', {
     enumerable: true,
-    value: 4
+    value: CDATA_SECTION_NODE
   });
   
   Object.defineProperty(o, 'ENTITY_REFERENCE_NODE', {
     enumerable: true,
-    value: 5
+    value: ENTITY_REFERENCE_NODE
   });
   
   Object.defineProperty(o, 'ENTITY_NODE', {
     enumerable: true,
-    value: 6
+    value: ENTITY_NODE
   });
 
   Object.defineProperty(o, 'PROCESSING_INSTRUCTION_NODE', {
     enumerable: true,
-    value: 7
+    value: PROCESSING_INSTRUCTION_NODE
   });
 
   Object.defineProperty(o, 'COMMENT_NODE', {
     enumerable: true,
-    value: 8
+    value: COMMENT_NODE
   });
 
   Object.defineProperty(o, 'DOCUMENT_NODE', {
     enumerable: true,
-    value: 9
+    value: DOCUMENT_NODE
   });
 
   Object.defineProperty(o, 'DOCUMENT_TYPE_NODE', {
     enumerable: true,
-    value: 10
+    value: DOCUMENT_TYPE_NODE
   });
 
   Object.defineProperty(o, 'DOCUMENT_FRAGMENT_NODE', {
     enumerable: true,
-    value: 11
+    value: DOCUMENT_FRAGMENT_NODE
   });
 
   Object.defineProperty(o, 'NOTATION_NODE', {
     enumerable: true,
-    value: 12
+    value: NOTATION_NODE
   });
 
   Object.defineProperty(o, 'sourceXml', {
@@ -302,44 +302,7 @@ export function createDOMNodePrototype(o) {
       };
     }
   });
-  
-  /*
-  // https://dom.spec.whatwg.org/#dom-node-childnodes
-  var emptyChildNodes = [];
-  Object.defineProperty(o, 'childNodes', {
-    enumerable: true,
-    get: function(){
-      switch (this.nodeType){
-        case 1:
-        case 9:
-          if (this.hasChildNodes()) {
-            break;
-          }
-          // falls through
-        default: 
-          return emptyChildNodes;
-      }
-      var n = this, level = 0, childNodes = [];
-      // eslint-disable-next-line no-cond-assign
-      while (level >= 0 && (n = n.n))  {
-        if (level === 0 && n.nodeType > 0) {
-          childNodes.push(n);
-        }
-        switch(n.nodeType) {
-          case 1:
-            if (!n.isSelfClosing){
-              level += 1;
-            }
-            break;
-          case -1:
-            level -= 1;
-        }
-      }
-      return childNodes;
-    }
-  });
-  */
-  
+    
   // https://dom.spec.whatwg.org/#dom-node-nodevalue
   Object.defineProperty(o, 'nodeValue', {
     enumerable: true,
