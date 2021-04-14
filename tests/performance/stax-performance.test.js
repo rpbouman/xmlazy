@@ -49,11 +49,11 @@ describe("Performance tests", () => {
     }
         
     test.each(fileNames)('Parse %s', async (fileName) => {
-      const memoryBefore = process.memoryUsage();
       const fstats = fs.statSync(fileName)
       const xml = await readFile(fileName);
       const start = Date.now();
       let staxReaderResult, count = 0;
+      const memoryBefore = process.memoryUsage();
       const staxStringReader = new xmlazy.StaxStringReader(xml);
       while (!(staxReaderResult = staxStringReader.next()).done){
         count += 1
