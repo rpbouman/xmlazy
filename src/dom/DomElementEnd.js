@@ -10,6 +10,7 @@ export function createDOMEndElementPrototype(domNodePrototype){
   // https://dom.spec.whatwg.org/#dom-node-nodetype
   Object.defineProperty(domNodePrototype, 'nodeType', {
     enumerable: true,
+    writable: false,
     value: -1
   });
 
@@ -45,5 +46,6 @@ export function createDOMEndElementPrototype(domNodePrototype){
       return /^[^\s/>]+/.exec(this.s.slice(this.b + 2))[0];
     }
   });
+  
   return domNodePrototype;
 }

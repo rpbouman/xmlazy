@@ -17,53 +17,75 @@ export function createDOMCharacterDataPrototype(domNodePrototype){
   });
   
   // https://dom.spec.whatwg.org/#dom-node-haschildnodes
-  domNodePrototype.hasChildNodes = function(){
-    return false;
-  };
+  Object.defineProperty(domNodePrototype, 'hasChildNodes', {
+    enumerable: true,
+    writable: false,
+    value: function(){
+      return false;
+    }
+  });
 
   // https://dom.spec.whatwg.org/#dom-node-firstchild
   Object.defineProperty(domNodePrototype, 'firstChild', {
     enumerable: true,
+    writable: false,
     value: null
   });
 
   // https://dom.spec.whatwg.org/#dom-node-lastchild
   Object.defineProperty(domNodePrototype, 'lastChild', {
     enumerable: true,
+    writable: false,
     value: null
   });
 
   // https://dom.spec.whatwg.org/#dom-node-lookupprefix
-  domNodePrototype.lookupPrefix = function(namespaceUri){
-    if (this.X) {
-      if (namespaceUri === null || namespaceUri === '') {
-        return null;
-      }
-      var x = this.x;
-      for (var pfx in x){
-        if (x[pfx] === namespaceUri) {
-          return pfx === '' ? null : pfx;
+  Object.defineProperty(domNodePrototype, 'lookupPrefix', {
+    enumerable: true,
+    writable: false,
+    value: function(namespaceUri){
+      if (this.X) {
+        if (namespaceUri === null || namespaceUri === '') {
+          return null;
+        }
+        var x = this.x;
+        for (var pfx in x){
+          if (x[pfx] === namespaceUri) {
+            return pfx === '' ? null : pfx;
+          }
         }
       }
+      return this.p.lookupPrefix(namespaceUri);
     }
-    return this.p.lookupPrefix(namespaceUri);
-  };
+  });
     
   // https://dom.spec.whatwg.org/#dom-node-lookupnamespaceuri
-  domNodePrototype.lookupNamespaceURI = function(pfx){
-    if (this.X) {
-      return this.X[pfx || ''];
+  Object.defineProperty(domNodePrototype, 'lookupNamespaceURI', {
+    enumerable: true,
+    writable: false,
+    value: function(pfx){
+      if (this.X) {
+        return this.X[pfx || ''];
+      }
+      return this.p.lookupNamespaceURI(pfx);
     }
-    return this.p.lookupNamespaceURI(pfx);
-  };
+  });
+  
 
   // https://dom.spec.whatwg.org/#dom-node-isdefaultnamespace
-  domNodePrototype.isDefaultNamespace = function(namespaceUri){
-    if (this.X) {
-      return this.X[''] === namespaceUri;
+  Object.defineProperty(domNodePrototype, 'isDefaultNamespace', {
+    enumerable: true,
+    writable: false,
+    value: function(namespaceUri){
+      if (namespaceUri === '') {
+        namespaceUri = null;
+      }
+      if (this.X) {
+        return this.X[''] === namespaceUri;
+      }
+      return this.p.isDefaultNamespace(namespaceUri);
     }
-    return this.p.isDefaultNamespace(namespaceUri);
-  };
+  });
 
   return domNodePrototype;
 }

@@ -65,9 +65,12 @@ export function createDOMDocumentTypePrototype(domNodePrototype){
     }
   });
   
-  domNodePrototype.hasChildNodes = function(){
-    return false;
-  };
-    
+  Object.defineProperty(domNodePrototype, 'hasChildNodes', {
+    enumerable: true,
+    value: function(){
+      return false;
+    }
+  });
+  
   return domNodePrototype;
 }

@@ -10,35 +10,50 @@ export function createDOMDocumentPrototype(domNodePrototype){
   // https://dom.spec.whatwg.org/#dom-node-nodetype
   Object.defineProperty(domNodePrototype, 'nodeType', {
     enumerable: true,
+    writable: false,
     value: 9
   });
   // https://dom.spec.whatwg.org/#dom-node-nodename
   Object.defineProperty(domNodePrototype, 'nodeName', {
     enumerable: true,
+    writable: false,
     value: '#document'
   });
   // 
   Object.defineProperty(domNodePrototype, 'p', {
+    enumerable: false,
+    writable: false,
     value: null
   });
+
   // 
   Object.defineProperty(domNodePrototype, 'b', {
+    enumerable: false,
+    writable: false,
     value: 0
   });
+  
   Object.defineProperty(domNodePrototype, 'e', {
+    enumerable: false,
     get: function(){
       return this.s.length;
     }
   });
+
   // https://dom.spec.whatwg.org/#dom-node-ownerdocument
   Object.defineProperty(domNodePrototype, 'ownerDocument', {
     enumerable: true,
     value: null
   });
+  
   // https://dom.spec.whatwg.org/#dom-node-haschildnodes
-  domNodePrototype.hasChildNodes = function() {
-    return Boolean(this.n);
-  };
+  Object.defineProperty(domNodePrototype, 'hasChildNodes', {
+    enumerable: true,
+    writable: false,
+    value: function() {
+      return Boolean(this.n);
+    }
+  });
   
   // https://dom.spec.whatwg.org/#dom-document-doctype
   Object.defineProperty(domNodePrototype, 'doctype', {
@@ -74,56 +89,73 @@ export function createDOMDocumentPrototype(domNodePrototype){
   });
 
   // https://dom.spec.whatwg.org/#dom-node-lookupprefix
-  domNodePrototype.lookupPrefix = function(namespaceUri){
-    if (namespaceUri === null || namespaceUri === '') {
-      return null;
+  Object.defineProperty(domNodePrototype, 'lookupPrefix', {
+    enumerable: true,
+    writable: false,
+    value: function(namespaceUri){
+      if (namespaceUri === null || namespaceUri === '') {
+        return null;
+      }
+      var e = this.documentElement;
+      if (e === null) {
+        return null;
+      }      
+      return e.lookupPrefix(namespaceUri);
     }
-    var e = this.documentElement;
-    if (e === null) {
-      return null;
-    }      
-    return e.lookupPrefix(namespaceUri);
-  };
+  });
 
   // https://dom.spec.whatwg.org/#dom-node-lookupnamespaceuri
-  domNodePrototype.lookupNamespaceURI = function(pfx){
-    var e = this.documentElement;
-    if (e === null) {
-      return null;
-    }      
-    return e.lookupNamespaceURI(pfx);
-  };
+  Object.defineProperty(domNodePrototype, 'lookupNamespaceURI', {
+    enumerable: true,
+    writable: false,
+    value: function(pfx){
+      var e = this.documentElement;
+      if (e === null) {
+        return null;
+      }      
+      return e.lookupNamespaceURI(pfx);
+    }
+  });
 
   // https://dom.spec.whatwg.org/#dom-node-isdefaultnamespace
-  domNodePrototype.isDefaultNamespace = function(namespaceUri){
-    if (namespaceUri === '') {
-      namespaceUri = null;
+  Object.defineProperty(domNodePrototype, 'isDefaultNamespace', {
+    enumerable: true,
+    writable: false,
+    value: function(namespaceUri){
+      if (namespaceUri === '') {
+        namespaceUri = null;
+      }
+      var e = this.documentElement;
+      if (e === null) {
+        return namespaceUri === null;
+      }      
+      return this.p.isDefaultNamespace(namespaceUri);
     }
-    var e = this.documentElement;
-    if (e === null) {
-      return namespaceUri === null;
-    }      
-    return this.p.isDefaultNamespace(namespaceUri);
-  };
+  });
   
   // https://dom.spec.whatwg.org/#dom-nonelementparentnode-getelementbyid
-  domNodePrototype.getElementById = function(id){
-    var n = this;
-    while (n = n.n) {
-      if (n.nodeType !== this.ELEMENT_NODE){
-        continue;
-      }
-      var attribute, attributeIteratorResult, attributeIterator = n.getAttributeIterator();
+  Object.defineProperty(domNodePrototype, 'getElementById', {
+    enumerable: true,
+    writable: false,
+    value: function(id){
+      var n = this;
       // eslint-disable-next-line no-cond-assign
-      while (!(attributeIteratorResult = attributeIterator.next()).done) {
-        attribute = attributeIteratorResult.value;
-        if (attribute.name === 'id' && attribute.value === id){
-          return n;
+      while (n = n.n) {
+        if (n.nodeType !== this.ELEMENT_NODE){
+          continue;
+        }
+        var attribute, attributeIteratorResult, attributeIterator = n.getAttributeIterator();
+        // eslint-disable-next-line no-cond-assign
+        while (!(attributeIteratorResult = attributeIterator.next()).done) {
+          attribute = attributeIteratorResult.value;
+          if (attribute.name === 'id' && attribute.value === id){
+            return n;
+          }
         }
       }
-    };
-    return null;
-  }
+      return null;
+    }
+  });
   
   return domNodePrototype;
 }

@@ -1,41 +1,47 @@
 var attributeRegexp = /(\s+)((([^\s=:x]|x[^m]|xm[^l]|xml[^n]|xmln[^s])[^=\s:]*|xmlns[^\s:=])(:[^\s:=]+)?)(\s*=\s*("[^"]*"|'[^']*'))/;
 var attributeIteratorPrototype = {};
 
-attributeIteratorPrototype.reset = function(){
-  delete this.p;
-  delete this.s;
-  delete this.r.v;
-};
+Object.defineProperty(attributeIteratorPrototype, 'reset', {
+  enumerable: true,
+  value: function(){
+    delete this.p;
+    delete this.s;
+    delete this.r.v;
+  }
+})
 
-attributeIteratorPrototype.next = function(){
-  var elementNode = this.E;
-  var re, s;
-  if (this.p) {
-    re = this.p;
-    s = this.s
+Object.defineProperty(attributeIteratorPrototype, 'next', {
+  enumerable: true,
+  value: function(){
+    var elementNode = this.E;
+    var re, s;
+    if (this.p) {
+      re = this.p;
+      s = this.s;
+    }
+    else {
+      re = this.p = new RegExp(attributeRegexp.source, 'g');
+      re.lastIndex = elementNode.b + 1 + elementNode.nodeName.length;
+      s = this.s = elementNode.s.slice(0, elementNode.e);
+    }
+    var r = this.r || (this.r = {done: false});
+    var match = re.exec(s);
+    if (match === null) {
+      r.done = true;
+      // reset and free
+      this.reset();
+    }
+    else {
+      r.value = {
+        b: match.index + match[1].length,
+        e: match.index + match[0].length,
+        p: elementNode,
+        __proto__: elementNode.a
+      };
+    }
+    return r;
   }
-  else {
-    re = this.p = new RegExp(attributeRegexp.source, 'g');
-    re.lastIndex = elementNode.b + 1 + elementNode.nodeName.length;
-    s = this.s = elementNode.s.slice(0, elementNode.e);
-  }
-  var r = this.r || (this.r = {done: false});
-  var match = re.exec(s);
-  if (match === null) {
-    r.done = true;
-    // reset and free
-    this.reset();
-  }
-  else {
-    r.value = {
-      b: match.index + match[1].length,
-      e: match.index + match[0].length,
-      p: elementNode,
-      __proto__: elementNode.a
-    };
-  }
-  return r;
-};
+});
 
 // https://dom.spec.whatwg.org/#namednodemap
 var namedNodeMapPrototype = {
@@ -43,41 +49,47 @@ var namedNodeMapPrototype = {
 };
 
 // https://dom.spec.whatwg.org/#dom-namednodemap-getnameditem
-namedNodeMapPrototype.getNamedItem = function(name){
-  if (typeof name !== 'string') {
-    throw new Error('Illegal argument: name must be of type string, got ${typeof name }');
-  }
-  var result, value;
-  // eslint-disable-next-line no-cond-assign
-  while (!(result = this.next()).done) {
-    value = result.value;
-    if (value.nodeName === name) {
-      this.reset();
-      return result.value;
+Object.defineProperty(namedNodeMapPrototype, 'getNamedItem', {
+  enumerable: true,
+  value: function(name){
+    if (typeof name !== 'string') {
+      throw new Error('Illegal argument: name must be of type string, got ${typeof name }');
     }
-  }
-  return null;
-};
-
-// https://dom.spec.whatwg.org/#dom-namednodemap-item
-namedNodeMapPrototype.item = function(index){
-  if (typeof index !== 'number') {
-    throw new Error('Illegal argument: index must be of type number, got ${typeof index }');
-  }
-  else if (index < 0) {
-    throw new Error('Illegal argument: index must not be less than zero.');
-  }
-  var i = 0;
-  while (!this.next().done && index > i++) {
-    // noop
-  }
-  var att = this.r.value;
-  if (att === undefined) {
+    var result, value;
+    // eslint-disable-next-line no-cond-assign
+    while (!(result = this.next()).done) {
+      value = result.value;
+      if (value.nodeName === name) {
+        this.reset();
+        return result.value;
+      }
+    }
     return null;
   }
-  this.reset();
-  return att;
-};
+});
+
+// https://dom.spec.whatwg.org/#dom-namednodemap-item
+Object.defineProperty(namedNodeMapPrototype, 'item', {
+  enumerable: true,
+  value: function(index){
+    if (typeof index !== 'number') {
+      throw new Error('Illegal argument: index must be of type number, got ${typeof index }');
+    }
+    else if (index < 0) {
+      throw new Error('Illegal argument: index must not be less than zero.');
+    }
+    var i = 0;
+    while (!this.next().done && index > i++) {
+      // noop
+    }
+    var att = this.r.value;
+    if (att === undefined) {
+      return null;
+    }
+    this.reset();
+    return att;
+  }
+});
 
 // https://dom.spec.whatwg.org/#dom-namednodemap-length
 Object.defineProperty(namedNodeMapPrototype, 'length', {
@@ -92,27 +104,30 @@ Object.defineProperty(namedNodeMapPrototype, 'length', {
 });
 
 // https://dom.spec.whatwg.org/#dom-namednodemap-getnameditemns
-namedNodeMapPrototype.getNamedItemNS = function(namespace, localName){
-  if (namespace && typeof namespace !== 'string') {
-    throw new Error('Illegal argument: namespace must be of type string, got ${typeof namespace}');
-  }
-  if (typeof localName !== 'string') {
-    throw new Error('Illegal argument: localName must be of type string, got ${typeof name }');
-  }
-  if (namespace === null) {
-    namespace = '';
-  }
-  var result, value;
-  // eslint-disable-next-line no-cond-assign
-  while (!(result = this.next()).done) {
-    value = result.value;
-    if (value.localName === localName && value.namespaceURI === namespace) {
-      this.reset();
-      return result.value;
+Object.defineProperty(namedNodeMapPrototype, 'getNamedItemNS', {
+  enumerable: true,
+  value: function(namespace, localName){
+    if (namespace && typeof namespace !== 'string') {
+      throw new Error('Illegal argument: namespace must be of type string, got ${typeof namespace}');
     }
+    if (typeof localName !== 'string') {
+      throw new Error('Illegal argument: localName must be of type string, got ${typeof name }');
+    }
+    if (namespace === null) {
+      namespace = '';
+    }
+    var result, value;
+    // eslint-disable-next-line no-cond-assign
+    while (!(result = this.next()).done) {
+      value = result.value;
+      if (value.localName === localName && value.namespaceURI === namespace) {
+        this.reset();
+        return result.value;
+      }
+    }
+    return null;
   }
-  return null;
-};
+});
 
 /**
 *
@@ -177,23 +192,32 @@ export function createDOMElementPrototype(domNodePrototype){
   });
   
   // https://dom.spec.whatwg.org/#dom-node-haschildnodes
-  domNodePrototype.hasChildNodes = function(){
-    return !(this.isSelfClosing || !this.n || this.n.nodeType === -1);
-  };
+  Object.defineProperty(domNodePrototype, 'hasChildNodes', {
+    enumerable: true,
+    value: function(){
+      return !(this.isSelfClosing || !this.n || this.n.nodeType === -1);
+    }
+  });
 
-  domNodePrototype.hasAttributes = function(){
-    return this['@'] === undefined 
-      ? /\s+([^x][^\s:=]*|x[^m][^\s:=]*|x|x(m(ln?)?)?|xmln[^s]|xmlns[^\s=:]+)(:[^s]+)?\s*=/.test(this.s.slice(this.b + 1, this.e - 1))
-      : true
-    ;
-  };
+  Object.defineProperty(domNodePrototype, 'hasAttributes', {
+    enumerable: true,
+    value: function(){
+      return this['@'] === undefined 
+        ? /\s+([^x][^\s:=]*|x[^m][^\s:=]*|x|x(m(ln?)?)?|xmln[^s]|xmlns[^\s=:]+)(:[^s]+)?\s*=/.test(this.s.slice(this.b + 1, this.e - 1))
+        : true
+      ;
+    }
+  });
   
-  domNodePrototype.getAttributeIterator = function(){
-    return {
-      E: this,
-      __proto__: attributeIteratorPrototype
-    };
-  };
+  Object.defineProperty(domNodePrototype, 'getAttributeIterator', {
+    enumerable: true,
+    value: function(){
+      return {
+        E: this,
+        __proto__: attributeIteratorPrototype
+      };
+    }
+  });
   
   // https://dom.spec.whatwg.org/#dom-element-attributes
   Object.defineProperty(domNodePrototype, 'attributes', {
@@ -207,98 +231,125 @@ export function createDOMElementPrototype(domNodePrototype){
   });
   
   // convenience method: this maps all attributes as attribute nodes keyed by qualified name
-  domNodePrototype.getAttributeNodeMap = function() {
-    var map = {};
-    var attribute, attributeIteratorResult, attributeIterator = this.getAttributeIterator();
-    // eslint-disable-next-line no-cond-assign
-    while (!(attributeIteratorResult = attributeIterator.next()).done) {
-      attribute = attributeIteratorResult.value;
-      map[attribute.name] = attribute;
+  Object.defineProperty(domNodePrototype, 'getAttributeNodeMap', {
+    enumerable: true,
+    value: function() {
+      var map = {};
+      var attribute, attributeIteratorResult, attributeIterator = this.getAttributeIterator();
+      // eslint-disable-next-line no-cond-assign
+      while (!(attributeIteratorResult = attributeIterator.next()).done) {
+        attribute = attributeIteratorResult.value;
+        map[attribute.name] = attribute;
+      }
+      return map;
     }
-    return map;
-  };
+  });
   
   // https://dom.spec.whatwg.org/#dom-element-getattributenames
   // must return the qualified names of the attributes in this’s attribute list, in order, and a new list otherwise.
   // An attribute’s qualified name is its local name if its namespace prefix is null, and its namespace prefix, followed by ":", followed by its local name, otherwise.
-  domNodePrototype.getAttributeNames = function(){
-    var attributeNames = [];
-    var attributeResult, attributeNode, attributeIterator = this.getAttributeIterator();
-    // eslint-disable-next-line no-cond-assign
-    while (!(attributeResult = attributeIterator.next()).done) {
-      attributeNode = attributeResult.value;
-      attributeNames.push(attributeNode.nodeName);
+  Object.defineProperty(domNodePrototype, 'getAttributeNames', {
+    enumerable: true,
+    value: function(){
+      var attributeNames = [];
+      var attributeResult, attributeNode, attributeIterator = this.getAttributeIterator();
+      // eslint-disable-next-line no-cond-assign
+      while (!(attributeResult = attributeIterator.next()).done) {
+        attributeNode = attributeResult.value;
+        attributeNames.push(attributeNode.nodeName);
+      }
+      return attributeNames;
     }
-    return attributeNames;
-  };
+  });
   
   // https://dom.spec.whatwg.org/#dom-element-getattributenode
-  domNodePrototype.getAttributeNode = function(name){
-    var attributeResult, attributeNode, attributeIterator = this.getAttributeIterator();
-    // eslint-disable-next-line no-cond-assign
-    while (!(attributeResult = attributeIterator.next()).done) {
-      attributeNode = attributeResult.value;
-      if (attributeNode.name === name) {
-        return attributeNode;
+  Object.defineProperty(domNodePrototype, 'getAttributeNode', {
+    enumerable: true,
+    value: function(name){
+      var attributeResult, attributeNode, attributeIterator = this.getAttributeIterator();
+      // eslint-disable-next-line no-cond-assign
+      while (!(attributeResult = attributeIterator.next()).done) {
+        attributeNode = attributeResult.value;
+        if (attributeNode.name === name) {
+          return attributeNode;
+        }
       }
+      return null;
     }
-    return null;
-  };
+  });
   
   // https://dom.spec.whatwg.org/#dom-element-getattribute
-  domNodePrototype.getAttribute = function(name){
-    var attributeNode = this.getAttributeNode(name);
-    if (attributeNode === null) {
-      return null;
+  Object.defineProperty(domNodePrototype, 'getAttribute', {
+    enumerable: true,
+    value: function(name){
+      var attributeNode = this.getAttributeNode(name);
+      if (attributeNode === null) {
+        return null;
+      }
+      return attributeNode.nodeValue;
     }
-    return attributeNode.nodeValue;
-  };
+  });
   
   // https://dom.spec.whatwg.org/#dom-element-getattributenodens
-  domNodePrototype.getAttributeNodeNS = function(namespace, localName){
-    var attributeResult, attributeNode, attributeIterator = this.getAttributeIterator();
-    // eslint-disable-next-line no-cond-assign
-    while (!(attributeResult = attributeIterator.next()).done) {
-      attributeNode = attributeResult.value;
-      if (attributeNode.namespaceURI === namespace && attributeNode.localName === localName) {
-        return attributeNode;
+  Object.defineProperty(domNodePrototype, 'getAttributeNodeNS', {
+    enumerable: true,
+    value: function(namespace, localName){
+      var attributeResult, attributeNode, attributeIterator = this.getAttributeIterator();
+      // eslint-disable-next-line no-cond-assign
+      while (!(attributeResult = attributeIterator.next()).done) {
+        attributeNode = attributeResult.value;
+        if (attributeNode.namespaceURI === namespace && attributeNode.localName === localName) {
+          return attributeNode;
+        }
       }
+      return null;
     }
-    return null;
-  };
+  });
 
   // https://dom.spec.whatwg.org/#dom-element-getattributens
-  domNodePrototype.getAttributeNS = function(namespace, localName){
-    var attributeNode = this.getAttributeNodeNS(namespace, localName);
-    if (attributeNode === null) {
-      return null;
+  Object.defineProperty(domNodePrototype, 'getAttributeNS', {
+    enumerable: true,
+    value: function(namespace, localName){
+      var attributeNode = this.getAttributeNodeNS(namespace, localName);
+      if (attributeNode === null) {
+        return null;
+      }
+      return attributeNode.nodeValue;
     }
-    return attributeNode.nodeValue;
-  };
+  });
   
   // https://dom.spec.whatwg.org/#dom-node-lookupprefix
-  domNodePrototype.lookupPrefix = function(namespaceURI){
-    if (namespaceURI === null || namespaceURI === '') {
+  Object.defineProperty(domNodePrototype, 'lookupPrefix', {
+    enumerable: true,
+    value: function(namespaceURI){
+      if (namespaceURI === null || namespaceURI === '') {
+        return null;
+      }
+      var x = this.x;
+      for (var pfx in x){
+        if (x[pfx] === namespaceURI) {
+          return pfx === '' ? null : pfx;
+        }
+      }
       return null;
     }
-    var x = this.x;
-    for (var pfx in x){
-      if (x[pfx] === namespaceURI) {
-        return pfx === '' ? null : pfx;
-      }
-    }
-    return null;
-  };
+  });
 
   // https://dom.spec.whatwg.org/#dom-node-lookupnamespaceuri
-  domNodePrototype.lookupNamespaceURI = function(pfx){
-    return this.x[pfx || ''] || null;
-  };
+  Object.defineProperty(domNodePrototype, 'lookupNamespaceURI', {
+    enumerable: true,
+    value: function(pfx){
+      return this.x[pfx || ''] || null;
+    }
+  });
 
   // https://dom.spec.whatwg.org/#dom-node-isdefaultnamespace
-  domNodePrototype.isDefaultNamespace = function(namespaceURI){
-    return this.x[''] === namespaceURI;
-  };
+  Object.defineProperty(domNodePrototype, 'isDefaultNamespace', {
+    enumerable: true,
+    value: function(namespaceURI){
+      return this.x[''] === namespaceURI;
+    }
+  });
 
   // https://dom.spec.whatwg.org/#dom-element-getelementsbytagnamens
   // The getElementsByTagNameNS(namespace, localName) method, when invoked, must return the list of elements with namespace namespace and local name localName for this.
@@ -308,102 +359,112 @@ export function createDOMElementPrototype(domNodePrototype){
   // Otherwise, if namespace is "*" (U+002A), return a HTMLCollection rooted at root, whose filter matches descendant elements whose local name is localName.
   // Otherwise, if localName is "*" (U+002A), return a HTMLCollection rooted at root, whose filter matches descendant elements whose namespace is namespace.
   // Otherwise, return a HTMLCollection rooted at root, whose filter matches descendant elements whose namespace is namespace and local name is localName.
-  domNodePrototype.getElementsByTagNameNS = function(namespaceURI, localName){
-    if (namespaceURI === '') {
-      namespaceURI = null;
-    }
-    const wildcard = '*';
-    const nodes = [];
-    const e = this.e;
-    const ELEMENT_NODE = this.ELEMENT_NODE;
-    const ELEMENT_END = this.ELEMENT_END;
-    let n = this, level = 0;
-    if (localName === wildcard && namespaceURI === wildcard) {
-      loop: while (n = n.n) {
-        switch (n.nodeType) {
-          case ELEMENT_NODE:
-            break;
-          case ELEMENT_END:
-            level -= 1;
-            if (level === 0) {
-              break loop;
-            }
-          default:
-            continue;
-        }
-        if (!n.isSelfClosing) {
-          level += 1;
-        }
-        nodes.push(n);
+  Object.defineProperty(domNodePrototype, 'getElementsByTagNameNS', {
+    enumerable: true,
+    value: function(namespaceURI, localName){
+      if (namespaceURI === '') {
+        namespaceURI = null;
       }
-    }
-    else
-    if (localName === wildcard){
-      loop: while (n = n.n) {
-        switch (n.nodeType) {
-          case ELEMENT_NODE:
-            break;
-          case ELEMENT_END:
-            level -= 1;
-            if (level === 0) {
-              break loop;
-            }
-          default:
-            continue;
-        }
-        if (!n.isSelfClosing) {
-          level += 1;
-        }
-        if (n.namespaceURI === namespaceURI) {
+      const wildcard = '*';
+      const nodes = [];
+      const ELEMENT_NODE = this.ELEMENT_NODE;
+      const ELEMENT_END = this.ELEMENT_END;
+      let n = this, level = 0;
+      if (localName === wildcard && namespaceURI === wildcard) {
+        // eslint-disable-next-line no-cond-assign
+        loop: while (n = n.n) {
+          switch (n.nodeType) {
+            case ELEMENT_NODE:
+              break;
+            case ELEMENT_END:
+              level -= 1;
+              if (level === 0) {
+                break loop;
+              }
+              // eslint-disable-next-line no-fallthrough
+            default:
+              continue;
+          }
+          if (!n.isSelfClosing) {
+            level += 1;
+          }
           nodes.push(n);
         }
       }
-    }
-    else
-    if (namespaceURI === wildcard){
-      loop: while (n = n.n) {
-        switch (n.nodeType) {
-          case ELEMENT_NODE:
-            break;
-          case ELEMENT_END:
-            level -= 1;
-            if (level === 0) {
-              break loop;
-            }
-          default:
-            continue;
-        }
-        if (!n.isSelfClosing) {
-          level += 1;
-        }
-        if (n.localName === localName) {
-          nodes.push(n);
-        }
-      }
-    }
-    else {
-      loop: while (n = n.n) {
-        switch (n.nodeType) {
-          case ELEMENT_NODE:
-            break;
-          case ELEMENT_END:
-            level -= 1;
-            if (level === 0) {
-              break loop;
-            }
-          default:
-            continue;
-        }
-        if (!n.isSelfClosing) {
-          level += 1;
-        }
-        if (n.localName === localName && n.namespaceURI === namespaceURI) {
-          nodes.push(n);
+      else
+      if (localName === wildcard){
+        // eslint-disable-next-line no-cond-assign
+        loop: while (n = n.n) {
+          switch (n.nodeType) {
+            case ELEMENT_NODE:
+              break;
+            case ELEMENT_END:
+              level -= 1;
+              if (level === 0) {
+                break loop;
+              }
+              // eslint-disable-next-line no-fallthrough
+            default:
+              continue;
+          }
+          if (!n.isSelfClosing) {
+            level += 1;
+          }
+          if (n.namespaceURI === namespaceURI) {
+            nodes.push(n);
+          }
         }
       }
+      else
+      if (namespaceURI === wildcard){
+        // eslint-disable-next-line no-cond-assign
+        loop: while (n = n.n) {
+          switch (n.nodeType) {
+            case ELEMENT_NODE:
+              break;
+            case ELEMENT_END:
+              level -= 1;
+              if (level === 0) {
+                break loop;
+              }
+              // eslint-disable-next-line no-fallthrough
+            default:
+              continue;
+          }
+          if (!n.isSelfClosing) {
+            level += 1;
+          }
+          if (n.localName === localName) {
+            nodes.push(n);
+          }
+        }
+      }
+      else {
+        // eslint-disable-next-line no-cond-assign
+        loop: while (n = n.n) {
+          switch (n.nodeType) {
+            case ELEMENT_NODE:
+              break;
+            case ELEMENT_END:
+              level -= 1;
+              if (level === 0) {
+                break loop;
+              }
+              // eslint-disable-next-line no-fallthrough
+            default:
+              continue;
+          }
+          if (!n.isSelfClosing) {
+            level += 1;
+          }
+          if (n.localName === localName && n.namespaceURI === namespaceURI) {
+            nodes.push(n);
+          }
+        }
+      }
+      return nodes;
     }
-    return nodes;
-  };
+  });
   
   return domNodePrototype;
 }

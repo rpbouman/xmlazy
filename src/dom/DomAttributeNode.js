@@ -118,19 +118,31 @@ export function createDOMAttributePrototype(domNodePrototype){
   });
 
   // https://dom.spec.whatwg.org/#dom-node-lookupprefix
-  domNodePrototype.lookupPrefix = function(namespaceUri){
-    return this.p.lookupPrefix(namespaceUri);
-  };
+  Object.defineProperty(domNodePrototype, 'lookupPrefix', {
+    enumerable: true,
+    writable: false,
+    value: function(namespaceUri){
+      return this.p.lookupPrefix(namespaceUri);
+    }
+  });
   
   // https://dom.spec.whatwg.org/#dom-node-lookupnamespaceuri
-  domNodePrototype.lookupNamespaceURI = function(pfx){
-    return this.p.lookupNamespaceURI(pfx);
-  };
+  Object.defineProperty(domNodePrototype, 'lookupNamespaceURI', {
+    enumerable: true,
+    writable: false,
+    value: function(pfx){
+      return this.p.lookupNamespaceURI(pfx);
+    }
+  });
 
   // https://dom.spec.whatwg.org/#dom-node-isdefaultnamespace
-  domNodePrototype.isDefaultNamespace = function(namespaceUri){
-    return this.p.isDefaultNamespace(namespaceUri);
-  };
+  Object.defineProperty(domNodePrototype, 'isDefaultNamespace', {
+    enumerable: true,
+    writable: false,
+    value: function(namespaceUri){
+      return this.p.isDefaultNamespace(namespaceUri);
+    }
+  });
 
   return domNodePrototype;
 }
