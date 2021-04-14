@@ -358,6 +358,64 @@ export function createDOMElementPrototype(domNodePrototype){
     }
   });
 
+  const wildcard = '*';
+  // https://dom.spec.whatwg.org/#dom-document-getelementsbytagname
+  // If qualified name is the wildcard, we will return all descendant elements of the current node.
+  // if qualified name is not the wildcard, we will return all descendant elements whose nodename matches the qualified name.
+  // note that this simple match is applied even if a namepsace prefix is assigned to multiple namespaces within the descendants tree  
+  Object.defineProperty(domNodePrototype, 'getElementsByTagName', {
+    enumerable: true,
+    value: function(qualifiedName) {
+      const nodes = [];
+      let n = this, level = 1;
+
+      if (qualifiedName === wildcard){
+        loop: while (n = n.n) {
+          switch (n.nodeType) {
+            case ELEMENT_NODE:
+              break;
+            case ELEMENT_END:
+              level -= 1;
+              if (level === 0) {
+                break loop;
+              }
+              // eslint-disable-next-line no-fallthrough
+            default:
+              continue;
+          }
+          if (!n.isSelfClosing) {
+            level += 1;
+          }
+          nodes.push(n);
+        }
+      }
+      else {
+        loop: while (n = n.n) {
+          switch (n.nodeType) {
+            case ELEMENT_NODE:
+              break;
+            case ELEMENT_END:
+              level -= 1;
+              if (level === 0) {
+                break loop;
+              }
+              // eslint-disable-next-line no-fallthrough
+            default:
+              continue;
+          }
+          if (!n.isSelfClosing) {
+            level += 1;
+          }
+          if (n.nodeName === qualifiedName) {
+            nodes.push(n);
+          }
+        }
+      }
+      var arrayNodeList = createArrayNodeList(nodes);
+      return arrayNodeList;
+    }
+  });
+
   // https://dom.spec.whatwg.org/#dom-element-getelementsbytagnamens
   // The getElementsByTagNameNS(namespace, localName) method, when invoked, must return the list of elements with namespace namespace and local name localName for this.
   // The list of elements with namespace namespace and local name localName for a node root is the HTMLCollection returned by the following algorithm:
@@ -372,9 +430,9 @@ export function createDOMElementPrototype(domNodePrototype){
       if (namespaceURI === '') {
         namespaceURI = null;
       }
-      const wildcard = '*';
       const nodes = [];
       let n = this, level = 1;
+
       if (localName === wildcard && namespaceURI === wildcard) {
         // eslint-disable-next-line no-cond-assign
         loop: while (n = n.n) {

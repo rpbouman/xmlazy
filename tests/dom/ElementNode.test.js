@@ -198,10 +198,11 @@ describe('Element open tag', () => {
       expect(elementNode.sourceXml).toBe(xml);
     });
   });
-  
-  describe('ElementsByTagNameNS', () => {
+
+  describe('ElementsByTagName', () => {
 
     const listns = 'urn:corp:list';
+    const listns2 = 'urn:corp:list2';
     const empns = 'urn:corp:emp';
     const secns = 'urn:corp:sec';
     
@@ -217,7 +218,60 @@ describe('Element open tag', () => {
           <sec:name>Sales</sec:name>
           <emp:name>John Smith</emp:name>
         </list:personList>
+        <list:personList xmlns:list="${listns2}">
+          <emp:empID>E0000002</emp:empID>
+          <sec:name>Development</sec:name>
+          <emp:name>Ichiro Tanaka</emp:name>
+        </list:personList>
+      </list:employeeList>
+    `;
+    let staxStringReader, doc, docElement; 
+
+    beforeAll(() => {
+      staxStringReader = new xmlazy.StaxStringReader(xml);
+      doc = staxStringReader.buildDocument();
+      docElement = doc.documentElement;
+    });
+
+    it('getElementsByTagName(*)', () => {
+      const descendants = docElement.getElementsByTagName('*');
+      expect(descendants.length).toBe(8);
+    });
+
+    it('getElementsByTagName(list:personList)', () => {
+      const descendants = docElement.getElementsByTagName('list:personList');
+      expect(descendants.length).toBe(2);
+    });
+
+    it('returns empty list for getElementsByTagName(name)', () => {
+      const descendants = docElement.getElementsByTagName('name');
+      expect(descendants.length).toBe(0);
+    });
+
+  });
+  
+
+  
+  describe('ElementsByTagNameNS', () => {
+
+    const listns = 'urn:corp:list';
+    const listns2 = 'urn:corp:list2';
+    const empns = 'urn:corp:emp';
+    const secns = 'urn:corp:sec';
+    
+    const xml = `
+      <?xml version="1.0"?>
+      <list:employeeList 
+        xmlns:list="${listns}"
+        xmlns:emp="${empns}"
+        xmlns:sec="${secns}"
+      >
         <list:personList>
+          <emp:empID>E0000001</emp:empID>
+          <sec:name>Sales</sec:name>
+          <emp:name>John Smith</emp:name>
+        </list:personList>
+        <list:personList xmlns:list="${listns2}">
           <emp:empID>E0000002</emp:empID>
           <sec:name>Development</sec:name>
           <emp:name>Ichiro Tanaka</emp:name>
@@ -239,7 +293,7 @@ describe('Element open tag', () => {
 
     it('getElementsByTagNameNS(namespace, *)', () => {
       const descendants = docElement.getElementsByTagNameNS(listns, '*');
-      expect(descendants.length).toBe(2);
+      expect(descendants.length).toBe(1);
     });
 
     it('getElementsByTagNameNS(*, name)', () => {

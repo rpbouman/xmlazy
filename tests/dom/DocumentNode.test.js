@@ -89,6 +89,57 @@ describe('Document Node', () => {
     });
     
   });
+
+  describe('ElementsByTagName', () => {
+
+    const listns = 'urn:corp:list';
+    const empns = 'urn:corp:emp';
+    const secns = 'urn:corp:sec';
+    const listns2 = 'urn:corp:list2';
+    
+    const xml = `
+      <?xml version="1.0"?>
+      <list:employeeList 
+        xmlns:list="${listns}"
+        xmlns:emp="${empns}"
+        xmlns:sec="${secns}"
+      >
+        <list:personList>
+          <emp:empID>E0000001</emp:empID>
+          <sec:name>Sales</sec:name>
+          <emp:name>John Smith</emp:name>
+        </list:personList>
+        <list:personList xmlns:list="${listns2}">
+          <emp:empID>E0000002</emp:empID>
+          <sec:name>Development</sec:name>
+          <emp:name>Ichiro Tanaka</emp:name>
+        </list:personList>
+      </list:employeeList>
+    `;
+    let staxStringReader, doc, docElement; 
+
+    beforeAll(() => {
+      staxStringReader = new xmlazy.StaxStringReader(xml);
+      doc = staxStringReader.buildDocument();
+    });
+
+    it('getElementsByTagName(*)', () => {
+      const descendants = doc.getElementsByTagNameNS('*', '*');
+      expect(descendants.length).toBe(9);
+    });
+
+    it('getElementsByTagName(list:personList)', () => {
+      const descendants = doc.getElementsByTagName('list:personList');
+      expect(descendants.length).toBe(2);
+    });
+
+    it('getElementsByTagName(xxx)', () => {
+      const descendants = doc.getElementsByTagName('xxx');
+      expect(descendants.length).toBe(0);
+    });
+
+  });
+  
   
   describe('ElementsByTagNameNS', () => {
 

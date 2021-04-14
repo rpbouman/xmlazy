@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>xmlazy Samples: 08. Basic Dom Maniupulation - getElementsByTagNameNS</title>
+    <title>xmlazy Samples: 07. Basic Dom Maniupulation - getElementsByTagName</title>
     <script type="text/javascript" src="../3rdparty/emoji-favicon-toolkit.min.js"></script>
     <script type="text/javascript">
       set_emoji_favicon(emoji="🦥", cacheWithServiceWorker = false);
@@ -22,7 +22,7 @@
     </style>
   </head>
   <body>
-    <h1>🦥 08. Basic Dom Manipulation - getElementsByTagNameNS</h1>
+    <h1>🦥 07. Basic Dom Manipulation - getElementsByTagName</h1>
     <a href="../index.html">Back</a>
     <p>
     </p>
@@ -35,7 +35,7 @@
       const xml = `
         &lt;?xml version="1.0"?&gt;
         &lt;list:employeeList 
-          xmlns:list="urn:corp:list"
+          xmlns:list="urn:corp:list"          
           xmlns:emp="urn:corp:emp"
           xmlns:sec="urn:corp:sec"
         &gt;
@@ -54,8 +54,7 @@
         const staxStringReader = new xmlazy.StaxStringReader(xml);
         const doc = staxStringReader.buildDocument();
         const el = doc.documentElement;
-        const names = el.getElementsByTagName('*', 'name');
-        const empns = el.getElementsByTagName('*', 'name');
+        const lists = el.getElementsByTagName('list:personList');
         
       } catch(e){
         document.getElementById("error").innerText = e.message;
@@ -64,9 +63,9 @@
     </pre>
     <p>
       This page uses and instance of the <code>StaxStringReader</code> class to build the DOM document of the XML entered into the text area. 
-      You can enter a namsspace URI and a localName. Then, when you hit parse getElementsByTagNameNS is called on the document element to nodes with the specified namespaceURI and localname.
-      The wildcard '*' may be passed for either or both namespaceURI and localName; passing the wildcard will accept any namespace and localName respoectively.
-      If found, the childnodes of the node with that id are displayed in the table. If not found, and empty list is returned.            
+      You can enter a qualified name, and when you hit parse,  getElementsByTagName is called on the document element to find nodes with the specified qualified nodename.
+      The wildcard '*' may be passed to match any element.
+      If found, the childnodes of the node with that id are displayed in the table. If not found, and empty list is returned.
     </p>
     <textarea 
       id="xmlInput"
@@ -84,7 +83,7 @@
     &lt;sec:name&gt;Sales&lt;/sec:name&gt;
     &lt;emp:name&gt;John Smith&lt;/emp:name&gt;
   &lt;/list:personList&gt;
-  &lt;list:personList xmlns:list="urn:corp:list2"&gt;
+  &lt;list:personList&gt;
     &lt;emp:empID&gt;E0000002&lt;/emp:empID&gt;
     &lt;sec:name&gt;Development&lt;/sec:name&gt;
     &lt;emp:name&gt;Ichiro Tanaka&lt;/emp:name&gt;
@@ -92,10 +91,7 @@
 &lt;/list:employeeList&gt;
 </textarea>
     <div>
-      Find elements by namespace (or * as wildcard): <input id="namespaceURI" value="*"/>
-    </div>
-    <div>
-      Find elements by localname (or * as wildcard): <input id="localName" value="*"/>
+      Find elements by qualified nme (or * as wildcard): <input id="qualifiedName" value="*"/>
     </div>
     <div>nodelist length: <span id="nodelistLength">undefined</span></div>
     <div>
@@ -144,12 +140,11 @@
         let row, cells;
         try {
 
-          const namespaceURI = document.getElementById('namespaceURI').value;
-          const localName = document.getElementById('localName').value;
+          const qualifiedName = document.getElementById('qualifiedName').value;
 
-          const elementsByTagNameNS = documentElement.getElementsByTagNameNS(namespaceURI, localName);
-          for (let i = 0, element; i < elementsByTagNameNS.length; i++){
-            element = elementsByTagNameNS.item(i);
+          const elementsByTagName = documentElement.getElementsByTagName(qualifiedName);
+          for (let i = 0, element; i < elementsByTagName.length; i++){
+            element = elementsByTagName.item(i);
 
             row = staxOutputTBody.insertRow(staxOutputTBodyRows.length);
             cells = row.cells;
