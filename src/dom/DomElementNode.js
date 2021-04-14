@@ -1,3 +1,10 @@
+import { 
+  ELEMENT_NODE,
+  ELEMENT_END
+} from './DomNodeTypes.js';
+
+import {createArrayNodeList} from './DomNodeList.js';
+
 var attributeRegexp = /(\s+)((([^\s=:x]|x[^m]|xm[^l]|xml[^n]|xmln[^s])[^=\s:]*|xmlns[^\s:=])(:[^\s:=]+)?)(\s*=\s*("[^"]*"|'[^']*'))/;
 var attributeIteratorPrototype = {};
 
@@ -8,7 +15,7 @@ Object.defineProperty(attributeIteratorPrototype, 'reset', {
     delete this.s;
     delete this.r.v;
   }
-})
+});
 
 Object.defineProperty(attributeIteratorPrototype, 'next', {
   enumerable: true,
@@ -195,7 +202,7 @@ export function createDOMElementPrototype(domNodePrototype){
   Object.defineProperty(domNodePrototype, 'hasChildNodes', {
     enumerable: true,
     value: function(){
-      return !(this.isSelfClosing || !this.n || this.n.nodeType === -1);
+      return !(this.isSelfClosing || !this.n || this.n.nodeType === ELEMENT_END);
     }
   });
 
@@ -367,9 +374,7 @@ export function createDOMElementPrototype(domNodePrototype){
       }
       const wildcard = '*';
       const nodes = [];
-      const ELEMENT_NODE = this.ELEMENT_NODE;
-      const ELEMENT_END = this.ELEMENT_END;
-      let n = this, level = 0;
+      let n = this, level = 1;
       if (localName === wildcard && namespaceURI === wildcard) {
         // eslint-disable-next-line no-cond-assign
         loop: while (n = n.n) {
@@ -462,7 +467,8 @@ export function createDOMElementPrototype(domNodePrototype){
           }
         }
       }
-      return nodes;
+      var arrayNodeList = createArrayNodeList(nodes);
+      return arrayNodeList;
     }
   });
   
