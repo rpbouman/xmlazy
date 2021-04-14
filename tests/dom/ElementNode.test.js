@@ -197,7 +197,61 @@ describe('Element open tag', () => {
     it(`sourceXml is "${xml}"`, () => {
       expect(elementNode.sourceXml).toBe(xml);
     });
-        
+  });
+  
+  describe('ElementsByTagNameNS', () => {
+
+    const listns = 'urn:corp:list';
+    const empns = 'urn:corp:emp';
+    const secns = 'urn:corp:sec';
+    
+    const xml = `
+      <?xml version="1.0"?>
+      <list:employeeList 
+        xmlns:list="${listns}"
+        xmlns:emp="${empns}"
+        xmlns:sec="${secns}"
+      >
+        <list:personList>
+          <emp:empID>E0000001</emp:empID>
+          <sec:name>Sales</sec:name>
+          <emp:name>John Smith</emp:name>
+        </list:personList>
+        <list:personList>
+          <emp:empID>E0000002</emp:empID>
+          <sec:name>Development</sec:name>
+          <emp:name>Ichiro Tanaka</emp:name>
+        </list:personList>
+      </list:employeeList>
+    `;
+    let staxStringReader, doc, docElement; 
+
+    beforeAll(() => {
+      staxStringReader = new xmlazy.StaxStringReader(xml);
+      doc = staxStringReader.buildDocument();
+      docElement = doc.documentElement;
+    });
+
+    it('getElementsByTagNameNS(*, *)', () => {
+      const descendants = docElement.getElementsByTagNameNS('*', '*');
+      expect(descendants.length).toBe(8);
+    });
+
+    it('getElementsByTagNameNS(namespace, *)', () => {
+      const descendants = docElement.getElementsByTagNameNS(listns, '*');
+      expect(descendants.length).toBe(2);
+    });
+
+    it('getElementsByTagNameNS(*, name)', () => {
+      const descendants = docElement.getElementsByTagNameNS('*', 'name');
+      expect(descendants.length).toBe(4);
+    });
+
+    it('getElementsByTagNameNS(namespace, name)', () => {
+      const descendants = docElement.getElementsByTagNameNS(secns, 'name');
+      expect(descendants.length).toBe(2);
+    });
+
   });
   
 });

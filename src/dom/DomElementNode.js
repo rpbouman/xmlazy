@@ -277,13 +277,13 @@ export function createDOMElementPrototype(domNodePrototype){
   };
   
   // https://dom.spec.whatwg.org/#dom-node-lookupprefix
-  domNodePrototype.lookupPrefix = function(namespaceUri){
-    if (namespaceUri === null || namespaceUri === '') {
+  domNodePrototype.lookupPrefix = function(namespaceURI){
+    if (namespaceURI === null || namespaceURI === '') {
       return null;
     }
     var x = this.x;
     for (var pfx in x){
-      if (x[pfx] === namespaceUri) {
+      if (x[pfx] === namespaceURI) {
         return pfx === '' ? null : pfx;
       }
     }
@@ -296,9 +296,114 @@ export function createDOMElementPrototype(domNodePrototype){
   };
 
   // https://dom.spec.whatwg.org/#dom-node-isdefaultnamespace
-  domNodePrototype.isDefaultNamespace = function(namespaceUri){
-    return this.x[''] === namespaceUri;
+  domNodePrototype.isDefaultNamespace = function(namespaceURI){
+    return this.x[''] === namespaceURI;
   };
 
+  // https://dom.spec.whatwg.org/#dom-element-getelementsbytagnamens
+  // The getElementsByTagNameNS(namespace, localName) method, when invoked, must return the list of elements with namespace namespace and local name localName for this.
+  // The list of elements with namespace namespace and local name localName for a node root is the HTMLCollection returned by the following algorithm:
+  // If namespace is the empty string, set it to null.
+  // If both namespace and localName are "*" (U+002A), return a HTMLCollection rooted at root, whose filter matches descendant elements.
+  // Otherwise, if namespace is "*" (U+002A), return a HTMLCollection rooted at root, whose filter matches descendant elements whose local name is localName.
+  // Otherwise, if localName is "*" (U+002A), return a HTMLCollection rooted at root, whose filter matches descendant elements whose namespace is namespace.
+  // Otherwise, return a HTMLCollection rooted at root, whose filter matches descendant elements whose namespace is namespace and local name is localName.
+  domNodePrototype.getElementsByTagNameNS = function(namespaceURI, localName){
+    if (namespaceURI === '') {
+      namespaceURI = null;
+    }
+    const wildcard = '*';
+    const nodes = [];
+    const e = this.e;
+    const ELEMENT_NODE = this.ELEMENT_NODE;
+    const ELEMENT_END = this.ELEMENT_END;
+    let n = this, level = 0;
+    if (localName === wildcard && namespaceURI === wildcard) {
+      loop: while (n = n.n) {
+        switch (n.nodeType) {
+          case ELEMENT_NODE:
+            break;
+          case ELEMENT_END:
+            level -= 1;
+            if (level === 0) {
+              break loop;
+            }
+          default:
+            continue;
+        }
+        if (!n.isSelfClosing) {
+          level += 1;
+        }
+        nodes.push(n);
+      }
+    }
+    else
+    if (localName === wildcard){
+      loop: while (n = n.n) {
+        switch (n.nodeType) {
+          case ELEMENT_NODE:
+            break;
+          case ELEMENT_END:
+            level -= 1;
+            if (level === 0) {
+              break loop;
+            }
+          default:
+            continue;
+        }
+        if (!n.isSelfClosing) {
+          level += 1;
+        }
+        if (n.namespaceURI === namespaceURI) {
+          nodes.push(n);
+        }
+      }
+    }
+    else
+    if (namespaceURI === wildcard){
+      loop: while (n = n.n) {
+        switch (n.nodeType) {
+          case ELEMENT_NODE:
+            break;
+          case ELEMENT_END:
+            level -= 1;
+            if (level === 0) {
+              break loop;
+            }
+          default:
+            continue;
+        }
+        if (!n.isSelfClosing) {
+          level += 1;
+        }
+        if (n.localName === localName) {
+          nodes.push(n);
+        }
+      }
+    }
+    else {
+      loop: while (n = n.n) {
+        switch (n.nodeType) {
+          case ELEMENT_NODE:
+            break;
+          case ELEMENT_END:
+            level -= 1;
+            if (level === 0) {
+              break loop;
+            }
+          default:
+            continue;
+        }
+        if (!n.isSelfClosing) {
+          level += 1;
+        }
+        if (n.localName === localName && n.namespaceURI === namespaceURI) {
+          nodes.push(n);
+        }
+      }
+    }
+    return nodes;
+  };
+  
   return domNodePrototype;
 }
