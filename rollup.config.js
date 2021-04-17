@@ -37,6 +37,25 @@ export default [
     output: [
       { 
         file: pkg.main, 
+        file: 'dist/xmlazy.cjs.min.js', 
+        format: 'cjs' 
+      },
+      { 
+        file: pkg.module, 
+        file: 'dist/xmlazy.esm.min.js', 
+        format: 'es' 
+      }
+    ],
+    plugins: [
+      compiler()
+    ]
+  },
+  {
+    input: 'src/main.js',
+    external: [],
+    output: [
+      { 
+        file: pkg.main, 
         format: 'cjs' 
       },
       { 
