@@ -92,5 +92,67 @@ describe('Text', () => {
     });
 
   });
+  
+  describe('Text with entities', () => {
+    
+    let 
+      staxStringReader, staxResult, 
+      xml, elementNode, textNode
+    ;    
+    beforeAll(() => {
+      
+    });
+  
+    it(`Should replace &lt;`, () => {
+      xml = `<hello>less than: &lt;</hello>`;
+      staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
+      staxResult = staxStringReader.next();
+      textNode = staxResult.value;
+      expect(textNode.nodeValue).toBe('less than: <');
+    });
+
+    it(`Should replace &gt;`, () => {
+      xml = `<hello>greather than: &gt;</hello>`;
+      staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
+      staxResult = staxStringReader.next();
+      textNode = staxResult.value;
+      expect(textNode.nodeValue).toBe('greather than: >');
+    });
+
+    it(`Should replace &apos;`, () => {
+      xml = `<hello>apos: &apos;</hello>`;
+      staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
+      staxResult = staxStringReader.next();
+      textNode = staxResult.value;
+      expect(textNode.nodeValue).toBe("apos: '");
+    });
+
+    it(`Should replace &quot;`, () => {
+      xml = `<hello>quot: &quot;</hello>`;
+      staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
+      staxResult = staxStringReader.next();
+      textNode = staxResult.value;
+      expect(textNode.nodeValue).toBe('quot: "');
+    });
+
+    it(`Should replace &amp;`, () => {
+      xml = `<hello>amp: &amp;</hello>`;
+      staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
+      staxResult = staxStringReader.next();
+      textNode = staxResult.value;
+      expect(textNode.nodeValue).toBe('amp: &');
+    });
+
+  });
 
 });
