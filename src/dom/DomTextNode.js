@@ -24,29 +24,14 @@ export function createDOMTextPrototype(domCharacterDataPrototype){
     "gt": '>',
     "apos": "'",
     "quot": '"',
-    "apos": '&'
+    "amp": '&'
   };
   
   // https://dom.spec.whatwg.org/#dom-characterdata-data
   Object.defineProperty(domCharacterDataPrototype, 'data', {
     enumerable: true,
     get: function(){
-      return this.s.slice(this.b, this.e)
-      .replace(/&((lt|gt|apos|quot|amp)|#(x([0-9A-Fa-f]+)|(\d+)));/g, 
-      function(match, entity, name, num, hexit, decit){
-        var text;
-        if (name !== undefined){
-          text = namedEntities[name];
-          if (text === undefined){
-            throw new Error(`Encountered illegal entity reference ${name}`);
-          }
-        }
-        else {
-          var i = parseInt(hexit || decit, hexit ? 16 : 10);
-          text = String.fromCharCode(i);
-        }
-        return text;
-      });
+      return this.replaceEntities(this.s.slice(this.b, this.e));
     }
   });
   return domCharacterDataPrototype;

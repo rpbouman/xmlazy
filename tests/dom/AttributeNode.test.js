@@ -19,7 +19,10 @@ describe('Attributes', () => {
     {prefix: null, localName: 'att11', value: 'double quoted value with one \' inside'},
     {prefix: null, localName: 'att12', value: 'single quoted value with one " inside'},
     {prefix: null, localName: 'att13', value: 'double quoted value with \' multiple \' inside'},
-    {prefix: null, localName: 'att14', value: 'single quoted value with " multiple " inside'}
+    {prefix: null, localName: 'att14', value: 'single quoted value with " multiple " inside'},
+    {prefix: null, localName: 'att15', value: "with named entity '"},
+    {prefix: null, localName: 'att16', value: "with hex entity α"},
+    {prefix: null, localName: 'att17', value: "with dec entity A"}
   ];
 
   const attributes = `
@@ -38,6 +41,9 @@ describe('Attributes', () => {
     att12='single quoted value with one " inside'
     att13="double quoted value with ' multiple ' inside"
     att14='single quoted value with " multiple " inside'
+    att15="with named entity &apos;"
+    att16="with hex entity &#x3B1;"
+    att17="with dec entity &#65;"
   `;
   
   describe('General attributes test', () => {

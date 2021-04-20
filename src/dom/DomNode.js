@@ -190,5 +190,37 @@ export function createDOMNodePrototype(o) {
     configurable: true
   });
   
+  Object.defineProperty(o, 'replaceEntities', {
+    enumerable: false,
+    value: function(text){
+      if (typeof(text) !== 'string'){
+        throw new Error(`Illegal argument - expected string`);
+      }
+      return text.replace(/&(#(x([0-9A-Fa-f]+)|(\d+))|[^;]*);/g, function(match, entity, num, hexit, decit){
+        if (num) {
+          var n = parseInt(hexit || decit, hexit ? 16 : 10);
+          if (!isNaN(n)){
+            return String.fromCharCode(n);
+          }
+        }
+        else {
+          switch (entity) {
+            case 'lt':
+              return '<';
+            case 'gt':
+              return '>';
+            case 'apos':
+              return "'";
+            case 'quot':
+              return '"';
+            case 'amp':
+              return '&';
+          }          
+        }
+        throw new Error(`Invalid character entity ${match}`);
+      });
+    }
+  });
+  
   return o;
 }

@@ -97,7 +97,7 @@ export function createDOMAttributePrototype(domNodePrototype){
   Object.defineProperty(domNodePrototype, 'value', {
     enumerable: true,
     get: function(){
-      return /'[^']*'|"[^"]*"/.exec(this.s.slice(this.b))[0].slice(1, -1);
+      return this.replaceEntities( /'[^']*'|"[^"]*"/.exec(this.s.slice(this.b))[0].slice(1, -1) );
     }
   });
 

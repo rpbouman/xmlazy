@@ -93,7 +93,7 @@ describe('Text', () => {
 
   });
   
-  describe('Text with entities', () => {
+  describe('Text with named entities', () => {
     
     let 
       staxStringReader, staxResult, 
@@ -151,6 +151,50 @@ describe('Text', () => {
       staxResult = staxStringReader.next();
       textNode = staxResult.value;
       expect(textNode.nodeValue).toBe('amp: &');
+    });
+    
+  });
+
+  describe('Text with decimal character entities', () => {
+    
+    let 
+      staxStringReader, staxResult, 
+      xml, elementNode, textNode
+    ;    
+    beforeAll(() => {
+      
+    });
+  
+    it(`Should replace &#65;`, () => {
+      xml = `<hello>this is an A: &#65;</hello>`;
+      staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
+      staxResult = staxStringReader.next();
+      textNode = staxResult.value;
+      expect(textNode.nodeValue).toBe('this is an A: A');
+    });
+
+  });
+
+  describe('Text with hexadecimal character entities', () => {
+    
+    let 
+      staxStringReader, staxResult, 
+      xml, elementNode, textNode
+    ;    
+    beforeAll(() => {
+      
+    });
+  
+    it(`Should replace &#x3B1;`, () => {
+      xml = `<hello>this is an Alpha: &#x3B1;</hello>`;
+      staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
+      staxResult = staxStringReader.next();
+      textNode = staxResult.value;
+      expect(textNode.nodeValue).toBe('this is an Alpha: α');
     });
 
   });
