@@ -213,6 +213,7 @@ describe('Element open tag', () => {
         xmlns:emp="${empns}"
         xmlns:sec="${secns}"
       >
+        <empty id="empty"/>
         <list:personList>
           <emp:empID>E0000001</emp:empID>
           <sec:name>Sales</sec:name>
@@ -235,7 +236,7 @@ describe('Element open tag', () => {
 
     it('getElementsByTagName(*)', () => {
       const descendants = docElement.getElementsByTagName('*');
-      expect(descendants.length).toBe(8);
+      expect(descendants.length).toBe(9);
     });
 
     it('getElementsByTagName(list:personList)', () => {
@@ -247,10 +248,14 @@ describe('Element open tag', () => {
       const descendants = docElement.getElementsByTagName('name');
       expect(descendants.length).toBe(0);
     });
+    
+    it('returns empty list for selfclosing element', () => {
+      const empty = doc.getElementById('empty');
+      const nodes = empty.getElementsByTagName('list:personList');
+      expect(nodes.length).toBe(0);
+    });
 
   });
-  
-
   
   describe('ElementsByTagNameNS', () => {
 
