@@ -367,6 +367,11 @@ export function createDOMElementPrototype(domNodePrototype){
     enumerable: true,
     value: function(qualifiedName) {
       const nodes = [];
+      
+      if (this.isSelfClosing){
+        return nodes;
+      }
+      
       let n = this, level = 1;
 
       if (qualifiedName === wildcard){
@@ -427,10 +432,14 @@ export function createDOMElementPrototype(domNodePrototype){
   Object.defineProperty(domNodePrototype, 'getElementsByTagNameNS', {
     enumerable: true,
     value: function(namespaceURI, localName){
+      const nodes = [];
+      if (this.isSelfClosing){
+        return nodes;
+      }
+
       if (namespaceURI === '') {
         namespaceURI = null;
       }
-      const nodes = [];
       let n = this, level = 1;
 
       if (localName === wildcard && namespaceURI === wildcard) {
