@@ -19,16 +19,16 @@ var SaxStreamReader = function(options){
     this.lastError = new Error('Configuration error: no saxHandler provided');
     throw this.lastError;
   }
-    
+
   if (options.textDecoder) {
-    // this means the stream returns something that is not a string (presumably, bytes), 
+    // this means the stream returns something that is not a string (presumably, bytes),
     // which need to be decoded first by this text decoder.
     this.textDecoder = options.textDecoder;
   }
   else {
     // no text decoder means the stream returns strings. not an error.
   }
-  
+
   //ok, ready to parse some xml.
   this.state = this.STATE_NOT_STARTED;
 };
@@ -37,7 +37,7 @@ SaxStreamReader.prototype = {
   STATE_NOT_STARTED: 0,
   STATE_BUSY: 1,
   STATE_PAUSED: 2,
-  STATE_NON_FATAL_ERROR: 3, 
+  STATE_NON_FATAL_ERROR: 3,
   STATE_FATAL_ERROR: 4,
   STATE_DONE: 5,  /*
   parseAndCallback: function(){
@@ -45,19 +45,19 @@ SaxStreamReader.prototype = {
     var textDecoder = this.textDecoder;
     var staxStringReader = this.staxStringReader;
     var saxHandler = this.saxHandler;
-    var saxHandlerResult; 
+    var saxHandlerResult;
     var staxResult;
     return new Promise(function(resolve, reject){
-      switch (this.state){ 
+      switch (this.state){
         case this.STATE_NOT_STARTED:
         case this.STATE_PAUSED:
           if (this.STATE_PAUSED) {
             try {
               while (!(staxResult = staxStringReader.next()).done){
                 saxHandlerResult = saxHandler.call(null, staxResult.result);
-                
+
               }
-            } 
+            }
             catch(exception){
               if (exception.isFatal) {
                 this.lastError = exception;
@@ -72,8 +72,8 @@ SaxStreamReader.prototype = {
             }
           }
           // if ok: read the first chunk from the stream. Check the result.
-          // is it done already? then probably reject (empty document)          
-          // if not, 
+          // is it done already? then probably reject (empty document)
+          // if not,
           // check if the text decoder is set, if it is, decode chunk to text.
           // call the handler, send a document node.
           // set our state to BUSY
@@ -88,7 +88,7 @@ SaxStreamReader.prototype = {
           //      read another chunk.
           break;
         case this.STATE_FATAL_ERROR:
-          // reject. 
+          // reject.
           // A previous parse encountered a fatal error and we cannot proceed.
           reject({
             state: this.state,
@@ -96,13 +96,13 @@ SaxStreamReader.prototype = {
           });
           break;
         case this.STATE_DONE:
-          // reject. 
+          // reject.
           // A previous parse consumed all of the stream and we cannot proceed.
           reject({
             state: this.state
           });
           break;
-        default: 
+        default:
           reject({
             state: this.state,
             error: new Error('Illegal state.')
@@ -117,9 +117,9 @@ SaxStreamReader.prototype = {
     var staxStringReader = options.staxStringReader || this.options.staxStringReader || new StaxStringReader('', {
       saxHandler: saxHandler
     });
-    staxStringReader.setSaxHandler(saxHandler); 
+    staxStringReader.setSaxHandler(saxHandler);
     var staxResult;
-    
+
     return new Promise(function(resolve, reject){
       if (!reader) {
         reject(new Error('No reader specified.'));
@@ -136,7 +136,7 @@ SaxStreamReader.prototype = {
           resolve(true);
           return;
         }
-        
+
         var string, chunk = readerResult.value;
         if (textDecoder) {  // the reader is returning raw bytes, we have to decode them
           if (spareBytes && spareBytes.length) {
@@ -151,11 +151,11 @@ SaxStreamReader.prototype = {
           var n = string.length - 1;
           for (var i = n; i >= 0; i--) {
             //REPLACEMENT CHARACTER, see https://en.wikipedia.org/wiki/Specials_(Unicode_block)
-            if (string.charCodeAt(i) !== 0xFFFD) { 
+            if (string.charCodeAt(i) !== 0xFFFD) {
               break;
             }
           }
-          // 
+          //
           if (n - i > 0) {
             spareBytes = chunk.slice(i);
             string = string.slice(0, -spareBytes.length);
@@ -164,13 +164,13 @@ SaxStreamReader.prototype = {
             spareBytes = undefined;
           }
         }
-        else 
+        else
         if (typeof chunk !== 'string'){
           reject(new Error(`Cannot handle chunk of type ${typeof chunk}.`));
           return;
         }
-        else {          
-          string = chunk;          
+        else {
+          string = chunk;
         }
         chunk = null;
         if (staxStringReader.index < staxStringReader.string.length) {
@@ -187,7 +187,7 @@ SaxStreamReader.prototype = {
             while (!(staxResult = staxStringReader.next()).done) {
               saxHandler.call(null, staxResult.value);
             }
-          } 
+          }
           catch (e) {
             if (e.isFatal !== false) {
               reject(e);
@@ -197,7 +197,7 @@ SaxStreamReader.prototype = {
           doRead();
         })();
       };
-      
+
       var doRead = function(){
         reader.read().then(handleChunkRead);
       };

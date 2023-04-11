@@ -18,14 +18,6 @@ export function createDOMTextPrototype(domCharacterDataPrototype){
     enumerable: true,
     value: '#text'
   });
-
-  const namedEntities = {
-    "lt": '<',
-    "gt": '>',
-    "apos": "'",
-    "quot": '"',
-    "amp": '&'
-  };
   
   // https://dom.spec.whatwg.org/#dom-characterdata-data
   Object.defineProperty(domCharacterDataPrototype, 'data', {

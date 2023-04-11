@@ -25,7 +25,7 @@ var StaxStringReader = function(string, options){
           this.throwError(`Options argument must be of type object, not ${typeof options}`);
           break _string;
       }
-    case 'object':       
+    case 'object':
       switch (typeof options) {
         case 'string':
           var s = options;
@@ -49,7 +49,7 @@ var StaxStringReader = function(string, options){
           string = options;
           options = undefined;
           break _string;
-        case undefined:
+        case 'undefined':
           break _string;
         default:
           this.throwError(`Invalid type: ${typeof options}`);
@@ -59,7 +59,7 @@ var StaxStringReader = function(string, options){
     options = { __proto__: defaultOptions};
   }
   this.options = options;
-  
+
   if (this.options.chainNodes) {
     this.chainNodes = this.options.chainNodes;
   }
@@ -130,7 +130,7 @@ StaxStringReader.prototype = {
   },
   getCurrentNamespaceContext: function(){
     return this.nsContext;
-  },  
+  },
   parseAndCallback: function(string, handler){
     _string: switch (typeof string) {
       case 'string':
@@ -145,7 +145,7 @@ StaxStringReader.prototype = {
             this.throwError(`Handler argument must be of type function, not ${typeof handler}`);
             break _string;
         }
-      case 'function':       
+      case 'function':
         switch (typeof handler) {
           case 'string':
             var s = handler;
@@ -177,7 +177,7 @@ StaxStringReader.prototype = {
             this.throwError(`Invalid type: ${typeof options}`);
         }
     }
-    
+
     switch (typeof(handler)) {
       case 'undefined':
         if (this.saxHandler === undefined) {
@@ -210,7 +210,7 @@ StaxStringReader.prototype = {
       throw new Error('Cannot build document after initiating iteration.');
     }
     this.chainNodes = true;
-    
+
     while (!this.next().done) {
       // noop
     }
@@ -252,7 +252,7 @@ StaxStringReader.prototype = {
         break;
       default:
         this.throwError('Illegal argument: "' + endHandle + '" is not a valid endHandle. Expected "-->" or "]]>".');
-    }      
+    }
   },
   throwUnclosedProcessingInstructionParseException: function(){
     this.throwError(this.UNCLOSED_PROCESSING_INSTRUCTION_PARSE_EXCEPTION, false);
@@ -271,9 +271,9 @@ StaxStringReader.prototype = {
     var string = this.string;
     var n = string.length;
     var result = this.result;
-    
+
     var indexOfLt = string.indexOf('<', index);
-    
+
     if (indexOfLt === -1) {
       if (index >= n){
         result.done = true;
@@ -281,14 +281,14 @@ StaxStringReader.prototype = {
         this.index = this.string.length;
         return result;
       }
-      
+
       // we found text beyond after the document element.
       // this is allowed, if it consists only of spaces.
-      
+
       if (!/^\s+$/.test(string.slice(index))) {
         this.throwContentFoundAfterDocumentElementParseException();
       }
-      
+
       proto = this.textPrototype;
       endIndex = string.length;
     }
@@ -311,8 +311,8 @@ StaxStringReader.prototype = {
           }
           proto = this.endElementPrototype;
           endIndex += endHandle.length;
-          
-          var _nsCtx; 
+
+          var _nsCtx;
           // eslint-disable-next-line no-cond-assign
           if (((_nsCtx = this.nsContext)._ -= 1) === 0) {
             this.nsContext = _nsCtx.__proto__;
@@ -321,7 +321,7 @@ StaxStringReader.prototype = {
         case '!':   // this looks like the start of either a comment or a CDATA section
           nextCharIndex += 1;
           var startHandle;
-          
+
           // comment?
           // eslint-disable-next-line no-cond-assign
           if (string.startsWith(startHandle = '--', nextCharIndex)) {
@@ -369,14 +369,14 @@ StaxStringReader.prototype = {
         case '':
           this.throwDanglingLessThanAtEndOfInputParseException();
           break;
-        default:    
+        default:
           proto = this.elementPrototype;
           // open element tag. this is a bit more tricky.
           //
           // we can always find our closing tag by scanning all content from here,
           // scanning for attribute value starts so we can ignore lt's occurring inside attributes.
           // this is expensive and we'd like to avoid it.
-          // 
+          //
           // we cannot simply look for the '>' since these may occur inside attribute values.
           //
           // However, in real-world, practical cases, '>' usually does not appear inside attribute values or content text.
@@ -388,7 +388,7 @@ StaxStringReader.prototype = {
           //
           // we could search for '<' as this would be the start of the next tag-like token.
           // this is safe, since this cannot appear inside an attribute.
-          // < may appear inside a comment or cdata section, 
+          // < may appear inside a comment or cdata section,
           // but since we are positioned at the start of the element tag,
           // and we are searching for the next <, there cannot be a CDATA section or comment in between.
           //
@@ -409,7 +409,7 @@ StaxStringReader.prototype = {
           }
           else {
             // We can now look for the last end tag handle > before ultimateIndex
-            ultimateIndex = string.lastIndexOf(endHandle, ultimateIndex);        
+            ultimateIndex = string.lastIndexOf(endHandle, ultimateIndex);
             if (ultimateIndex < nextCharIndex) {
               this.throwUnclosedElementStartTagParseError();
             }
@@ -436,13 +436,13 @@ StaxStringReader.prototype = {
               endIndex = nextCharIndex + match[0].length;
             }
           }
-          
+
           var selfClosing = string.charAt(endIndex - 1) === '/';
           var slice = string.slice(index, endIndex);
           if (slice.indexOf('xmlns') !== -1) {
             nsContext = { __proto__: this.nsContext};
             var prefix, uri, xmlnsMatch, reXmlns = /\s+(xmlns(:[^\s=]+)?)\s*=\s*('[^']*'|"[^"]*")/g;
-            
+
             // eslint-disable-next-line no-cond-assign
             while (xmlnsMatch = reXmlns.exec(slice)) {
               prefix = xmlnsMatch[2] ? xmlnsMatch[2].slice(1) : '';
@@ -466,14 +466,14 @@ StaxStringReader.prototype = {
       X: (nsContext || this.nsContext),
       __proto__: proto
     };
-      
+
     if (this.chainNodes) {
       value.p = result.value;
       result.value.n = value;
     }
     result.value = value;
 
-    this.index = endIndex;    
+    this.index = endIndex;
 
     return result;
   }

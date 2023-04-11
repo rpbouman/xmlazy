@@ -161,7 +161,6 @@ export function createDOMDocumentPrototype(domNodePrototype){
     enumerable: true,
     writable: false,
     value: function(nodeName){
-      const wildcard = '*';
       var documentElement = this.documentElement;
       var nodes = documentElement.getElementsByTagName(nodeName);
       

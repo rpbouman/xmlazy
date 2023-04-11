@@ -1,4 +1,4 @@
-import { 
+import {
   ELEMENT_NODE,
   ATTRIBUTE_NODE,
   TEXT_NODE,
@@ -27,27 +27,27 @@ export function createDOMNodePrototype(o) {
     enumerable: true,
     value: ELEMENT_NODE
   });
-  
+
   Object.defineProperty(o, 'ATTRIBUTE_NODE', {
     enumerable: true,
     value: ATTRIBUTE_NODE
   });
-  
+
   Object.defineProperty(o, 'TEXT_NODE', {
     enumerable: true,
     value: TEXT_NODE
   });
-  
+
   Object.defineProperty(o, 'CDATA_SECTION_NODE', {
     enumerable: true,
     value: CDATA_SECTION_NODE
   });
-  
+
   Object.defineProperty(o, 'ENTITY_REFERENCE_NODE', {
     enumerable: true,
     value: ENTITY_REFERENCE_NODE
   });
-  
+
   Object.defineProperty(o, 'ENTITY_NODE', {
     enumerable: true,
     value: ENTITY_NODE
@@ -88,7 +88,7 @@ export function createDOMNodePrototype(o) {
       return this.s.slice(this.b, this.e);
     }
   });
-  
+
   //TODO: implement this so as to return a normalized representation of this element.
   Object.defineProperty(o, 'toString', {
     enumerable: true,
@@ -182,19 +182,19 @@ export function createDOMNodePrototype(o) {
       };
     }
   });
-    
+
   // https://dom.spec.whatwg.org/#dom-node-nodevalue
   Object.defineProperty(o, 'nodeValue', {
     enumerable: true,
     value: null,
     configurable: true
   });
-  
+
   Object.defineProperty(o, 'replaceEntities', {
     enumerable: false,
     value: function(text){
       if (typeof(text) !== 'string'){
-        throw new Error(`Illegal argument - expected string`);
+        throw new Error(`Illegal argument type "${typeof(text)}" - expected "string".`);
       }
       return text.replace(/&(#(x([0-9A-Fa-f]+)|(\d+))|[^;]*);/g, function(match, entity, num, hexit, decit){
         if (num) {
@@ -210,17 +210,17 @@ export function createDOMNodePrototype(o) {
             case 'gt':
               return '>';
             case 'apos':
-              return "'";
+              return '\'';
             case 'quot':
               return '"';
             case 'amp':
               return '&';
-          }          
+          }
         }
         throw new Error(`Invalid character entity ${match}`);
       });
     }
   });
-  
+
   return o;
 }
