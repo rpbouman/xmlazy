@@ -25,7 +25,7 @@ export function createDOMPIPrototype(domCharacterDataPrototype){
   Object.defineProperty(domCharacterDataPrototype, 'data', {
     enumerable: true,
     get: function(){
-      throw new Error('Not implemented');
+      return /^[^\s/?]+(\s(.+))?/.exec(this.s.slice(this.b + 2, this.e - 2))[2];
     }
   });
   

@@ -7,11 +7,11 @@
       set_emoji_favicon(emoji="🦥", cacheWithServiceWorker = false);
     </script>
     <style type="text/css">
-    
+
       #error {
         color: red;
       }
-      
+
     </style>
   </head>
   <body>
@@ -52,7 +52,7 @@
         document.getElementById("staxEvents").innerText = "";
         document.getElementById("speed").innerText = "";
         document.getElementById("error").innerText = "";
-        
+
         const fileInput = event.target;
         const files = fileInput.files;
         const file = files[0];
@@ -62,24 +62,24 @@
         fileInput.value = "";
 
         document.getElementById("fileSize").innerText = file.size + " bytes ("  + Math.round(file.size/1024) +  " Kb)" ;
-        
-        const fileReader = new FileReader();        
+
+        const fileReader = new FileReader();
         fileReader.onload = function(event){
-          const xml = event.target.result;          
+          const xml = event.target.result;
           parseXml(xml);
           const expired = Date.now() - start;
           document.getElementById("time").innerText = expired;
           document.getElementById("staxEvents").innerText = numStaxEvents;
-          document.getElementById("speed").innerText =  
-            Math.round(file.size / expired / 1024) + " Kb/ms; " + 
+          document.getElementById("speed").innerText =
+            Math.round(file.size / expired / 1024) + " Kb/ms; " +
             Math.round(numStaxEvents / expired ) + " StaxEvents/ms; "
           ;
         }
         const start = Date.now();
         fileReader.readAsText(file);
       }
-                  
-      const parseXml = (xml) => { 
+
+      const parseXml = (xml) => {
         const staxOutput = document.getElementById("staxOutput");
         const staxReader = new xmlazy.StaxStringReader(xml);
         let staxReaderResult;
@@ -95,7 +95,7 @@
       }
 
       document.getElementById("fileInput").onchange = handleFile;
-      
-    </script>    
+
+    </script>
   </body>
 </html>

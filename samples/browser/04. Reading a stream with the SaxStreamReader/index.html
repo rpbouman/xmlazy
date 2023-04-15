@@ -10,17 +10,35 @@
       textarea {
         width: 100%
       }
-      
+
     </style>
   </head>
   <body>
     <h1>🦥 04. Reading a stream with the SaxStreamReader</h1>
     <a href="../index.html">Back</a>
-    <input
-      type="file"
-      id="fileInput"
-      accept=".xml"
-    />
+    <table>
+      <tr>  
+        <td>
+          <input
+            type="file"
+            id="fileInput"
+            accept=".xml"
+          />
+        </td>
+      </tr>
+      <tr>
+        <th>Filesize</th><td id="fileSize"></td>
+      </tr>
+      <tr>
+        <th>Time</th><td id="time"></td>
+      </tr>
+      <tr>
+        <th>Stax Events:</th><td id="staxEvents"></td>
+      </tr>
+      <tr>
+        <th>Speed:</th><td id="speed"></td>
+      </tr>
+    </table>
     <script type="module">
       import * as xmlazy from '/dist/xmlazy.bundle.js';
 
@@ -31,21 +49,31 @@
         if (file === undefined) {
           return;
         }
+        document.getElementById("fileSize").innerText = file.size + " bytes ("  + Math.round(file.size/1024) +  " Kb)" ;        
         fileInput.value = '';
         const stream = file.stream();
-        const reader = stream.getReader();        
-        
+        const reader = stream.getReader();
+
+        var numStaxEvents = 0;
         var saxHandler = function(domNode){
-          //console.log(domNode.nodeType, domNode.sourceXml);
+          numStaxEvents += 1;
         }
-        
-        var saxStreamReader = new xmlazy.SaxStreamReader();
-        console.time('Parse');
-        saxStreamReader.parseAndCallback({
+
+        var saxStreamReader = new xmlazy.SaxStreamReader({
           saxHandler: saxHandler,
           textDecoder: new TextDecoder('UTF-8'),
           reader: reader
-        }).then(function(){
+        });
+        console.time('Parse');
+        const start = Date.now();
+        saxStreamReader.parseAndCallback().then(function(){
+          const expired = Date.now() - start;
+          document.getElementById("time").innerText = expired;
+          document.getElementById("staxEvents").innerText = numStaxEvents;
+          document.getElementById("speed").innerText =
+            Math.round(file.size / expired / 1024) + " Kb/ms; " +
+            Math.round(numStaxEvents / expired ) + " StaxEvents/ms; "
+          ;
           console.timeEnd('Parse');
         }).catch(function(){
           debugger;

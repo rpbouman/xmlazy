@@ -1,6 +1,10 @@
 import { StaxStringReader } from '../stax/StaxStringReader.js';
 
 var SaxStreamReader = function(options){
+  if (!options){
+    this.lastError = new Error('Configuration error: no configuration provided');
+    throw this.lastError;
+  }
   this.options = options;
   if (options.reader) {
     this.reader = options.reader;
@@ -111,6 +115,7 @@ SaxStreamReader.prototype = {
     }.bind(this));
   },*/
   parseAndCallback: function(options) {
+    options = Object.assign({}, this.options, options);
     var reader = options.reader || this.options.reader;
     var textDecoder = options.textDecoder || this.options.textDecoder;
     var saxHandler = options.saxHandler || this.options.saxHandler;
