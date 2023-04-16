@@ -1,5 +1,6 @@
 import { StaxStringReader } from './stax/StaxStringReader.js';
 import { SaxStreamReader } from './stream/SaxStreamReader.js';
+import { DecoderUtils } from './decoder/DecoderUtils.js';
 import {
   ELEMENT_NODE,
   ATTRIBUTE_NODE,
@@ -18,6 +19,7 @@ import {
 module.exports = {
   StaxStringReader: StaxStringReader,
   SaxStreamReader: SaxStreamReader,
+  DecoderUtils: DecoderUtils,
   DomNodeTypes: {
     ELEMENT_NODE,
     ATTRIBUTE_NODE,
