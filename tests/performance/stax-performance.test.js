@@ -1,8 +1,6 @@
 require('babel-polyfill');
-const https = require('https');
 const fs = require('fs');
 const path = require('path');
-const yauzl = require("yauzl");
 
 import * as xmlazy from '../../src/xmlazy.js';
 
@@ -20,7 +18,7 @@ describe("Performance tests", () => {
           reject(err);
         }
         resolve(xml);
-      });    
+      });
     });
   }
   
@@ -50,7 +48,19 @@ describe("Performance tests", () => {
         
     test.each(fileNames)('Parse %s', async (fileName) => {
       const fstats = fs.statSync(fileName)
-      const xml = await readFile(fileName);
+      let xml;
+      try {
+        xml = await readFile(fileName);
+      }
+      catch (e) {
+        if (e.message === 'Cannot create a string longer than 0x1fffffe8 characters') {
+          console.log(`skipping ${fileName} due to string length limit.`);
+          return;
+        }
+        else {
+          throw e;
+        }
+      }
       const start = Date.now();
       let staxReaderResult, count = 0;
       const memoryBefore = process.memoryUsage();
@@ -60,13 +70,13 @@ describe("Performance tests", () => {
       }
       const end = Date.now();
       const expired = end - start;
-      console.log(`${fileName}: parsed ${fstats.size} bytes (${xml.length} chars) into ${count} stax events in ${expired}ms. ${Math.round(xml.length/expired)} chars/ms, ${Math.round(count/expired)} events/ms.`);
+      //console.log(`${fileName}: parsed ${fstats.size} bytes (${xml.length} chars) into ${count} stax events in ${expired}ms. ${Math.round(xml.length/expired)} chars/ms, ${Math.round(count/expired)} events/ms.`);
       const memoryAfter = process.memoryUsage();
       const memoryDiff = {};
       for (let p in memoryAfter) {
         memoryDiff[p] = memoryAfter[p] - memoryBefore[p];
       }
-      console.log(memoryDiff);
+      //console.log(memoryDiff);
     });
     
   });
@@ -96,7 +106,19 @@ describe("Performance tests", () => {
     }
     
     test.each(fileNames)('Parse %s', async (fileName) => {
-      const xml = await readFile(fileName);
+      let xml;
+      try {
+        xml = await readFile(fileName);
+      }
+      catch (e) {
+        if (e.message === 'Cannot create a string longer than 0x1fffffe8 characters') {
+          console.log(`skipping ${fileName} due to string length limit.`);
+          return;
+        }
+        else {
+          throw e;
+        }
+      }
       const start = Date.now();
       let staxReaderResult, count = 0;
       const staxStringReader = new xmlazy.StaxStringReader(xml, {chaiNodes: true});
@@ -105,7 +127,7 @@ describe("Performance tests", () => {
       }
       const end = Date.now();
       const expired = end - start;
-      console.log(`${fileName}: parsed ${xml.length} chars into ${count} stax events in ${expired}ms. ${Math.round(xml.length/expired)} chars/ms, ${Math.round(count/expired)} events/ms.`);
+      //console.log(`${fileName}: parsed ${xml.length} chars into ${count} stax events in ${expired}ms. ${Math.round(xml.length/expired)} chars/ms, ${Math.round(count/expired)} events/ms.`);
     });
     
   });
