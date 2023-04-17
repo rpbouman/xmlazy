@@ -33,7 +33,7 @@ var SaxStreamReader = function(options){
     this.textDecoder = options.textDecoder;
   }
   else {
-    // no text decoder means the stream returns strings. not an error.
+    // no text decoder means the stream returns strings, or that we should guess the encoding
   }
 
   //ok, ready to parse some xml.
@@ -86,12 +86,12 @@ SaxStreamReader.prototype = {
 
         var string, chunk = readerResult.value;
         
-        if (!textDecoder) {
+        if (!textDecoder && typeof chunk !== 'string') {
           if (chunk instanceof Uint8Array) {
             if (!decoderUtils) {
               decoderUtils = new DecoderUtils();
             }
-            textDecoder = this.createDecoderForXml(chunk);
+            textDecoder = decoderUtils.createDecoderForXml(chunk);
           }
           else {
             reject(new Error(`Cannot handle chunk of type ${typeof chunk}.`));
@@ -143,27 +143,37 @@ SaxStreamReader.prototype = {
         staxStringReader.setString(string);
         string = null;
         newString = null;
-        (function(){
-          try {
-            // eslint-disable-next-line no-cond-assign
-            while (!(staxResult = staxStringReader.next()).done) {
-              saxHandler.call(null, staxResult.value);
-            }
-          }
-          catch (e) {
-            if (e.isFatal !== false) {
-              reject(e);
+
+        try {
+          // eslint-disable-next-line no-cond-assign
+          while (!(staxResult = staxStringReader.next()).done) {
+            // pass result to the sax handler
+            if (saxHandler.call(null, staxResult.value) === false) {
+              // if the sax handler returns false, then it means it has had enough and wants to quit parsing.
+              resolve(true);
               return;
             }
           }
-          doRead();
-        })();
+        }
+        catch (e) {
+          if (e.isFatal !== false) {
+            reject(e);
+            return;
+          }
+        }
+        doRead();
       };
 
       var doRead = function(){
         reader.read().then(handleChunkRead);
       };
-      doRead();
+
+      if (saxHandler.call(null, staxStringReader.getDocumentNode()) === false) {
+        resolve(true);
+      }
+      else {
+        doRead();
+      }
     }.bind(this));
   }
 };

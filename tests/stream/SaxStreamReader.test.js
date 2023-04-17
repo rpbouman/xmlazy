@@ -35,7 +35,7 @@ StringReader.prototype = {
     const chunkSize = this.chunkSize;
     
     return new Promise(function(resolve, reject){
-      if (index < stringLength) {        
+      if (index < stringLength) {
         let newIndex = index + chunkSize;
         if (newIndex > stringLength) {
           newIndex = stringLength;
@@ -115,7 +115,7 @@ describe('SaxStreamReader', () => {
     saxStreamReader.parseAndCallback(xmlStringReader).then(function(){
       console.log(JSON.stringify(handler1.getNodes()));
       console.log(JSON.stringify(handler2.getNodes()));
-      expect(handler1.getNodes()).toEqual(handler2.getNodes());
+      expect(handler2.getNodes()).toEqual(handler1.getNodes());
     });
   });
 

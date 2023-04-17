@@ -264,7 +264,6 @@ describe('DecoderUtils', () => {
               }
               
               const tmpEncoding = decoderUtils.guessEncoding(buffer);
-              console.log(`${fileName}, tmpEncoding: ${tmpEncoding}, bytes: ${buffer[0]}, ${buffer[1]}, ${buffer[2]}, ${buffer[3]}`);
               expect(buffer instanceof Uint8Array).toBe(true);
               
               const decoder = decoderUtils.createDecoderForXml(buffer);
