@@ -282,7 +282,7 @@ StaxStringReader.prototype = {
         return result;
       }
 
-      // we found text beyond after the document element.
+      // we found text after the document element.
       // this is allowed, if it consists only of spaces.
 
       if (!/^\s+$/.test(string.slice(index))) {
