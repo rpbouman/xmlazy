@@ -101,7 +101,6 @@ describe('SaxStreamReader', () => {
   const staxStringReader = new xmlazy.StaxStringReader({
     saxHandler: handler1.handleStaxEvent.bind(handler1)
   });
-  staxStringReader.parseAndCallback(xmlString);
 
   const xmlStringReader = new StringReader(xmlString, 10);
   const handler2 = new ArrayStoreSaxHandler();
@@ -109,14 +108,11 @@ describe('SaxStreamReader', () => {
     reader: xmlStringReader,
     saxHandler: handler2.handleStaxEvent.bind(handler2)
   });
+  staxStringReader.parseAndCallback(xmlString);
   
-  it('sax parsing a stream gives same result as sax parsing a string', done => {
-    staxStringReader.parseAndCallback(xmlString);
-    saxStreamReader.parseAndCallback(xmlStringReader).then(function(){
-      console.log(JSON.stringify(handler1.getNodes()));
-      console.log(JSON.stringify(handler2.getNodes()));
-      expect(handler2.getNodes()).toEqual(handler1.getNodes());
-    });
+  it('sax parsing a stream gives same result as sax parsing a string', async () => {
+    await saxStreamReader.parseAndCallback(xmlStringReader);
+    expect(handler2.getNodes()).toEqual(handler1.getNodes());
   });
 
 });

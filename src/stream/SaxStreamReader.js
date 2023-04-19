@@ -1,4 +1,5 @@
 import { StaxStringReader } from '../stax/StaxStringReader.js';
+import { TEXT_NODE } from '../dom/DomNodeTypes.js';
 import { DecoderUtils } from '../decoder/DecoderUtils.js';
 
 var decoderUtils;
@@ -47,6 +48,30 @@ SaxStreamReader.prototype = {
   STATE_NON_FATAL_ERROR: 3,
   STATE_FATAL_ERROR: 4,
   STATE_DONE: 5,
+  normalizeBufferedTextNodes: function(textNodeBuffer){
+    let textNode;
+    switch (textNodeBuffer.length){
+      case 0:
+        textNode =  null;
+        break;
+      case 1:
+        textNode = textNodeBuffer[0];
+        break;
+      default:
+        var text = textNodeBuffer.reduce(function(acc, curr){
+          acc += curr.nodeValue;
+          return acc;
+        }, '');
+
+        textNode = textNodeBuffer[0];
+        textNode.s = text;
+        textNode.b = 0;
+        textNode.E = text.length;
+    }
+
+    textNodeBuffer.length = 0;
+    return textNode;
+  },
   parseAndCallback: function(options) {
     options = Object.assign({}, this.options, options);
     var reader = options.reader || this.options.reader;
@@ -66,6 +91,7 @@ SaxStreamReader.prototype = {
     });
     staxStringReader.setSaxHandler(saxHandler);
     var staxResult;
+    var textNodeBuffer = [];
 
     return new Promise(function(resolve, reject){
       if (!reader) {
@@ -77,8 +103,17 @@ SaxStreamReader.prototype = {
         return;
       }
       var spareBytes;
-      var handleChunkRead = function(readerResult){
+      var handleChunkRead = (function(readerResult){
+        var textNode;
         if (readerResult.done === true) {
+          textNode = this.normalizeBufferedTextNodes(textNodeBuffer);
+          if (textNode !== null) {
+            if (saxHandler.call(null, textNode) === false) {
+              resolve(true);
+              return;
+            }
+            textNode = null;
+          }
           saxHandler.call(null, {nodeType: -staxStringReader.baseNode.DOCUMENT_NODE});
           resolve(true);
           return;
@@ -145,15 +180,32 @@ SaxStreamReader.prototype = {
         newString = null;
 
         try {
-          // eslint-disable-next-line no-cond-assign
-          while (!(staxResult = staxStringReader.next()).done) {
-            // pass result to the sax handler
-            if (saxHandler.call(null, staxResult.value) === false) {
-              // if the sax handler returns false, then it means it has had enough and wants to quit parsing.
-              resolve(true);
-              return;
+          do {
+            staxResult = staxStringReader.next();
+            if (staxResult.done === true) {
+              break;
             }
-          }
+            var staxNode = staxResult.value;
+            
+            if (staxNode.nodeType === TEXT_NODE){
+              textNodeBuffer.push(staxNode);
+            }
+            else {
+              textNode = this.normalizeBufferedTextNodes(textNodeBuffer);
+              if (textNode !== null) {
+                if (saxHandler.call(null, textNode) === false) {
+                  resolve(true);
+                  return;
+                }
+                textNode = null;
+              }
+              if (saxHandler.call(null, staxNode) === false){
+                resolve(true);
+                return;
+              }
+            }
+          } while (staxResult);
+          
         }
         catch (e) {
           if (e.isFatal !== false) {
@@ -162,7 +214,7 @@ SaxStreamReader.prototype = {
           }
         }
         doRead();
-      };
+      }.bind(this));
 
       var doRead = function(){
         reader.read().then(handleChunkRead);
