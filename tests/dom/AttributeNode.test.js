@@ -3,6 +3,7 @@ import * as xmlazy from '../../src/xmlazy.js';
 describe('Attributes', () => {
   
   const prefix = 'p';
+  const namespace1 = 'http://www.ns1.com/'
   const namespace = 'http://www.ns.com/'
   const attributeTestset = [
     {prefix: null, localName: 'att1', value: 'value'},
@@ -12,7 +13,7 @@ describe('Attributes', () => {
     {prefix: null, localName: 'att4', value: 'single quote'},
     {prefix: null, localName: 'att5', value: 'one space before the = but not after'},
     {prefix: null, localName: 'att6', value: 'one space after the = but not before'},
-    {prefix: null, localName: 'att7', value: 'one space on eitherside of the ='},
+    {prefix: null, localName: 'att7', value: 'one space on either side of the ='},
     {prefix: null, localName: 'att8', value: 'multiple spaces before the = but not after'},
     {prefix: null, localName: 'att9', value: 'multiple spaces after the = but not before'},
     {prefix: null, localName: 'att10', value: 'multiple spaces on eitherside of the ='},
@@ -33,7 +34,7 @@ describe('Attributes', () => {
     att4='single quote'
     att5 ='one space before the = but not after'
     att6= 'one space after the = but not before'
-    att7 = 'one space on eitherside of the ='
+    att7 = 'one space on either side of the ='
     att8   ='multiple spaces before the = but not after'
     att9=   'multiple spaces after the = but not before'
     att10   =   'multiple spaces on eitherside of the ='
@@ -48,7 +49,7 @@ describe('Attributes', () => {
   
   describe('General attributes test', () => {
     const tagname = 'hello';
-    const xml = `<${tagname} xmlns:${prefix}="${namespace}" ${attributes}>`;
+    const xml = `<${tagname} xmlns="${namespace1}" xmlns:${prefix}="${namespace}" ${attributes}>`;
     let staxStringReader, staxResult, elementNode; 
 
     beforeAll(() => {
@@ -91,9 +92,32 @@ describe('Attributes', () => {
         expect(attributeNode.ownerElement).toBe(elementNode);
         expect(attributeNode.hasChildNodes()).toBe(false);
         expect(attributeNode.childNodes.length).toEqual(0);
+        
+        expect(attributeNode.lookupNamespaceURI(null)).toBe(namespace1);
+        expect(attributeNode.lookupNamespaceURI('')).toBe(namespace1);
+        expect(attributeNode.lookupNamespaceURI(undefined)).toBe(namespace1);
+        
+        expect(attributeNode.lookupPrefix(null)).toBe(null);
+        expect(attributeNode.lookupPrefix('')).toBe(null);
+        expect(attributeNode.lookupPrefix(undefined)).toBe(null);
+        
+        expect(attributeNode.isDefaultNamespace(namespace1));
       }
     });
     
+    it(`can reset the attribute iterator`, () => {
+      var iteratorResult, iterator = elementNode.getAttributeIterator();
+      while (!(iteratorResult = iterator.next()).done){
+      }
+      iterator.reset();
+      var i = 0, attributeData, attributeNode;
+      while (!(iteratorResult = iterator.next()).done){
+        attributeNode = iteratorResult.value;
+        attributeData = attributeTestset[i++];
+        expect(attributeNode.localName).toBe(attributeData.localName);
+      }
+    });
+
     it(`implements getAttributeNames()`, ()=>{
       var attributeNames = elementNode.getAttributeNames();
       var testNames = attributeTestset.map((data) => {
@@ -120,10 +144,10 @@ describe('Attributes', () => {
             attributeNode = attributeMap[name];
           });
           it('attribute defined', () => {
-            expect(attributeNode).toBeDefined();          
+            expect(attributeNode).toBeDefined();
           });
           it('attribute not null', () => {
-            expect(attributeNode).not.toBe(null);          
+            expect(attributeNode).not.toBe(null);
           });
           it(`nodeName to equal "${name}"`, () => {
             expect(attributeNode.nodeName).toBe(name);
@@ -137,6 +161,8 @@ describe('Attributes', () => {
           it(`namespaceURI to equal "${attributeData.namespace === undefined ? 'null' : attributeData.namespace}"`, () => {
             expect(attributeNode.namespaceURI).toBe(attributeData.namespace === undefined ? null : attributeData.namespace);
           });
+
+          
           it(`localName to equal "${attributeData.localName}"`, () => {
             expect(attributeNode.localName).toBe(attributeData.localName);
           });
@@ -195,7 +221,7 @@ describe('Attributes', () => {
             attributeNode = elementNode.attributes.item(i);
           });
           it('attribute not null', () => {
-            expect(attributeNode).not.toBe(null);          
+            expect(attributeNode).not.toBe(null);
           });
           it(`nodeName to equal "${name}"`, () => {
             expect(attributeNode.nodeName).toBe(name);
@@ -271,7 +297,7 @@ describe('Attributes', () => {
             attributeNode = elementNode.getAttributeNodeNS(namespace, name);
           });
           it('attribute not null', () => {
-            expect(attributeNode).not.toBe(null);          
+            expect(attributeNode).not.toBe(null);
           });
           it(`nodeName to equal "${name}"`, () => {
             expect(attributeNode.nodeName).toBe(name);
@@ -290,6 +316,12 @@ describe('Attributes', () => {
           });
           it(`value to equal "${attributeData.value}"`, () => {
             expect(attributeNode.value).toBe(attributeData.value);
+          });
+          it(`Can lookup prefix '${attributeData.prefix}' for namespace '${attributeData.namespace || namespace1}'.`, () => {
+            expect(attributeNode.lookupPrefix(attributeData.namespace)).toBe(attributeData.prefix || null);
+          });
+          it(`Can lookup namespace '${attributeData.namespace || namespace1}' for prefix '${attributeData.prefix}'.`, () => {
+            expect(attributeNode.lookupNamespaceURI(attributeData.prefix)).toBe(attributeData.namespace || namespace1);
           });
         });
       }
@@ -316,7 +348,8 @@ describe('Attributes', () => {
         name = attributeData.localName;
         namespace = attributeData.namespace === undefined ? null : attributeData.namespace;
         it(`getAttributeNS(${namespace}, ${name})`, () => {
-          expect(elementNode.getAttributeNS(namespace, name)).toBe(attributeData.value);
+          const attributeValue = elementNode.getAttributeNS(namespace, name);
+          expect(attributeValue).toBe(attributeData.value);
         });
       }
     });

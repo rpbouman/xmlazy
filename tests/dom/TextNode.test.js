@@ -68,29 +68,67 @@ describe('Text', () => {
     expect(textNode.data).toBe(text);
   });
 
+  it(`lookupPrefix(null) equals null`, () => {
+    expect(textNode.lookupPrefix(null)).toBe(null);
+  });
+
+  it(`lookupNamespaceURI(null) equals null`, () => {
+    expect(textNode.lookupNamespaceURI(null)).toBe(null);
+  });
+
+  it(`isDefaultNamespace(null) equals true`, () => {
+    expect(textNode.isDefaultNamespace(null)).toBe(true);
+  });
+
   describe('Text in namespace', () => {
     
     const text = 'world';
+    const text2 = 'hello';
     const ns = 'urn.tmp:text';
+    const ns1 = 'urn.tmp:text1';
     const pfx = 'txt';
     let 
       staxStringReader, staxResult, 
-      xml, elementNode, textNode
+      xml, elementNode, textNode, textNode1
     ;    
     beforeAll(() => {
       
-      xml = `<hello xmlns:${pfx}="${ns}">${text}</hello>`;
+      xml = `<hello xmlns="${ns1}" xmlns:${pfx}="${ns}">${text}<b>${text2}</b></hello>`;
       staxStringReader = new xmlazy.StaxStringReader(xml, {chainNodes: true});
+
       staxResult = staxStringReader.next();
       elementNode = staxResult.value;
+
       staxResult = staxStringReader.next();
       textNode = staxResult.value;
+
+      staxResult = staxStringReader.next();
+      elementNode = staxResult.value;
+      
+      staxResult = staxStringReader.next();
+      textNode1 = staxResult.value;
+      
     });
   
-    it(`lookupPrefix must be null`, () => {
+    it(`lookupPrefix ${ns} must be ${pfx}`, () => {
       expect(textNode.lookupPrefix(ns)).toBe(pfx);
     });
 
+    it(`lookupNamespaceURI of ${pfx} must be ${ns}`, () => {
+      expect(textNode.lookupNamespaceURI(pfx)).toBe(ns);
+    });
+
+    it(`isDefaultNamespace(${ns}) equals false`, () => {
+      expect(textNode.isDefaultNamespace(ns)).toBe(false);
+    });
+
+    it(`isDefaultNamespace(${ns1}) equals true`, () => {
+      expect(textNode.isDefaultNamespace(ns1)).toBe(true);
+    });
+
+    it(`isDefaultNamespace(${ns1}) equals true`, () => {
+      expect(textNode1.isDefaultNamespace(ns1)).toBe(true);
+    });
   });
   
   describe('Text with named entities', () => {

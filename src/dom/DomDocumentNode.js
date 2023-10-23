@@ -67,6 +67,7 @@ export function createDOMDocumentPrototype(domNodePrototype){
             return null;
           case this.DOCUMENT_TYPE_NODE:
             return n;
+          default:
         }
       }
       return null;
@@ -122,14 +123,11 @@ export function createDOMDocumentPrototype(domNodePrototype){
     enumerable: true,
     writable: false,
     value: function(namespaceUri){
-      if (namespaceUri === '') {
-        namespaceUri = null;
-      }
       var e = this.documentElement;
       if (e === null) {
-        return namespaceUri === null;
-      }      
-      return this.p.isDefaultNamespace(namespaceUri);
+        return namespaceUri === null || namespaceUri === '';
+      }
+      return e.isDefaultNamespace(namespaceUri);
     }
   });
   

@@ -354,6 +354,9 @@ export function createDOMElementPrototype(domNodePrototype){
   Object.defineProperty(domNodePrototype, 'isDefaultNamespace', {
     enumerable: true,
     value: function(namespaceURI){
+      if (namespaceURI === '') {
+        namespaceURI = null;
+      }
       return this.x[''] === namespaceURI;
     }
   });

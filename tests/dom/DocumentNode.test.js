@@ -5,10 +5,26 @@ describe('Document Node', () => {
   const tagname = 'hello';
   const xml = `<${tagname}>`;
   let staxStringReader, staxResult, documentNode, elementNode;
-  
+
+  const doctype = '<!DOCTYPE html>';
+  const html = `${doctype}<html/>`;
+  let staxStringReader2, htmlDocumentNode;
+
+  const ns1 = 'http://www.ns.hello1/';
+  const ns2 = 'http://www.ns.hello2/';
+  const pfx = 'pfx';
+  let staxStringReader3, nsDocumentNode;
+
   beforeAll(() => {
     staxStringReader = new xmlazy.StaxStringReader(xml);
     documentNode = staxStringReader.buildDocument();
+    
+    staxStringReader2 = new xmlazy.StaxStringReader(html);
+    htmlDocumentNode = staxStringReader2.buildDocument();
+    
+    staxStringReader3 = new xmlazy.StaxStringReader(`<${pfx}:tag xmlns="${ns1}" xmlns:${pfx}="${ns2}">`);
+    nsDocumentNode = staxStringReader3.buildDocument();
+    
   });
 
   describe('Basic doc node tests', () =>{
@@ -23,8 +39,63 @@ describe('Document Node', () => {
     it(`nodeName is "#document"`, () => {
       expect(documentNode.nodeName).toBe('#document');
     });
+    
+    it(`doctype is null`, () => {
+      expect(documentNode.doctype).toBe(null);
+    });
+
+  });
+ 
+  describe('doctype test', () =>{
+    it(`doctype is not null`, () => {
+      expect(htmlDocumentNode.doctype).not.toBe(null);
+    });
+
+    it(`doctype is of type DOCUMENT_TYPE_NODE`, () => {
+      expect(htmlDocumentNode.doctype.nodeType).toBe(10);
+    });
+    
   });
 
+  describe('namespace tests', () =>{
+    it(`lookupPrefix(null) is null`, () => {
+      expect(documentNode.lookupPrefix(null)).toBe(null);
+    });
+
+    it(`lookupNamespaceURI(null) is null`, () => {
+      expect(documentNode.lookupNamespaceURI(null)).toBe(null);
+    });
+
+    it(`isDefaultNamespace(null) is true`, () => {
+      expect(documentNode.isDefaultNamespace(null)).toBe(true);
+    });
+
+    it(`isDefaultNamespace('') is true`, () => {
+      expect(documentNode.isDefaultNamespace('')).toBe(true);
+    });
+
+    it(`lookupPrefix(${ns1}) is null`, () => {
+      expect(nsDocumentNode.lookupPrefix(ns1)).toBe(null);
+    });
+
+    it(`lookupPrefix(${ns2}) is ${pfx}`, () => {
+      expect(nsDocumentNode.lookupPrefix(ns2)).toBe(pfx);
+    });
+
+    it(`lookupNamespaceURI(null}) is ${ns1}`, () => {
+      expect(nsDocumentNode.lookupNamespaceURI(null)).toBe(ns1);
+    });
+
+    it(`lookupNamespaceURI(${pfx}) is ${ns2}`, () => {
+      expect(nsDocumentNode.lookupNamespaceURI(pfx)).toBe(ns2);
+    });
+    
+    it(`isDefaultNamespace(${ns1}) is true`, () => {
+      expect(nsDocumentNode.isDefaultNamespace(ns1)).toBe(true);
+    });
+  });
+
+  
   describe('DocumentElement tests', () => {
     it(`has a documentElement"`, () => {
       const elementNode = documentNode.documentElement;
