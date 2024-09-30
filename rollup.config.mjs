@@ -1,7 +1,7 @@
 import compiler from '@ampproject/rollup-plugin-closure-compiler';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import pkg from './package.json'; 
+import pkg from './package.json' assert {type: 'json'}; 
 import babel from '@rollup/plugin-babel';
 
 export default [
